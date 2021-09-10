@@ -8,5 +8,5 @@ object LoggerExtensions {
     inline val <reified T> T.TAG: String get() = T::class.java.simpleName
 
     inline fun <reified T> T.logd(msg: String) = Log.d(TAG, msg)
-    inline fun <reified T, V> T.logd(data: V) = Log.d(TAG, data.toString())
+    inline fun <reified T, V> T.logd(value: V) = Log.d(TAG, value.toString())
 }
