@@ -25,7 +25,7 @@ Provides locker operation using BLE
 Provides operation of the locker you are using
 
 - Get a locker in use
-- Reserve available lockers
+- Reserve an available locker
 - Cancel the reserved locker
 - Share your locker in use
 
