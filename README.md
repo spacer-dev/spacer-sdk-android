@@ -168,7 +168,14 @@ You can check the operation of Spacer SDK in the app project. see [example code]
 ### How to use
 
 1. Open the `app` project
-2. Set the values of `sdk.token` in local.properties
+2. Set the values for `sdk.baseUrl` and　`sdk.token` in local.properties  
+
+```
+#local.properties
+sdk.baseUrl=https://ex-app.spacer.co.jp
+sdk.token=
+```
+
 3. Build and Run on the android
 
 ### About `sdk.token`
