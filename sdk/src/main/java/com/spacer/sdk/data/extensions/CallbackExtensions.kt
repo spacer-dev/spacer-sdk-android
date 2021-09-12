@@ -13,47 +13,44 @@ import retrofit2.Response
 
 object CallbackExtensions {
     inline fun <reified T : IResData> ICallback.toRetrofitCallback(): Callback<T> {
-        val self = this
         return object : Callback<T> {
             override fun onResponse(call: Call<T>, res: Response<T>) {
-                res.tryFindError()?.let { return self.onFailure(it) }
-                self.onSuccess()
+                res.tryFindError()?.let { return onFailure(it) }
+                onSuccess()
             }
 
             override fun onFailure(call: Call<T?>, t: Throwable) {
                 logd(t.toString())
-                return self.onFailure(SPRError.ApiFailed)
+                return onFailure(SPRError.ApiFailed)
             }
         }
     }
 
     inline fun <reified T : IResData> IResultCallback<T>.toRetrofitCallback(): Callback<T> {
-        val self = this
         return object : Callback<T> {
             override fun onResponse(call: Call<T>, res: Response<T>) {
-                res.tryFindError()?.let { return self.onFailure(it) }
-                self.onSuccess(res.body()!!)
+                res.tryFindError()?.let { return onFailure(it) }
+                onSuccess(res.body()!!)
             }
 
             override fun onFailure(call: Call<T?>, t: Throwable) {
                 logd(t.toString())
-                return self.onFailure(SPRError.ApiFailed)
+                return onFailure(SPRError.ApiFailed)
             }
         }
     }
 
     inline fun <reified TR : IResData, reified TD> IResultCallback<TD>.toRetrofitCallback(mapper: IMapper<TR, TD>): Callback<TR> {
-        val self = this
         return object : Callback<TR> {
             override fun onResponse(call: Call<TR>, res: Response<TR>) {
-                res.tryFindError()?.let { return self.onFailure(it) }
+                res.tryFindError()?.let { return onFailure(it) }
                 val data = mapper.map(res.body()!!)
-                return self.onSuccess(data)
+                return onSuccess(data)
             }
 
             override fun onFailure(call: Call<TR?>, t: Throwable) {
                 logd(t.toString())
-                return self.onFailure(SPRError.ApiFailed)
+                return onFailure(SPRError.ApiFailed)
             }
         }
     }
