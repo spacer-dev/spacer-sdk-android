@@ -3,7 +3,6 @@ package com.spacer.sdk.services.cbLocker.scan
 import android.content.Context
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
-import com.spacer.sdk.data.extensions.LoggerExtensions.logd
 import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.models.sprLocker.SPRLockerModel
 import com.spacer.sdk.services.sprLocker.SPRLockerService
