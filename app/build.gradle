@@ -77,6 +77,6 @@ dependencies {
     implementation "org.koin:koin-androidx-scope:2.0.1"
     implementation "org.koin:koin-androidx-viewmodel:2.0.1"
 
-//    implementation 'com.spacer:sdk:0.0.2'
+//    implementation 'com.spacer:sdk:0.0.3'
     implementation project(":sdk")
 }
