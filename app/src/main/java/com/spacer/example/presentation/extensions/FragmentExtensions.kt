@@ -1,7 +1,6 @@
 package com.spacer.example.presentation.extensions
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import androidx.fragment.app.Fragment
 import com.spacer.example.R
 import com.spacer.example.presentation.common.dialog.DialogMessage

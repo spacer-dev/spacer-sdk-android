@@ -7,12 +7,12 @@ import com.spacer.sdk.data.extensions.EnumExtensions.safeValueOf
 import com.spacer.sdk.values.sprLocker.SPRLockerStatus
 
 class SPRLockerModel(val id: String, val status: SPRLockerStatus, val size: String?) {
-    override fun toString() = "id:${id},status:${status},size:${size}"
+    override fun toString() = "id:${id},status:${status.text},size:${size}"
 }
 
 fun SPRLockerResData.toModel(): SPRLockerModel {
-    val statusEnum = safeValueOf(status) ?: SPRLockerStatus.unknown
-    return SPRLockerModel(id, statusEnum, size)
+    val status = safeValueOf(status, SPRLockerStatus.Unknown)
+    return SPRLockerModel(id, status, size)
 }
 
 class SPRLockerListMapper : IMapper<SPRLockerGetResData, List<SPRLockerModel>> {
