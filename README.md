@@ -142,7 +142,7 @@ service.shareUrlKey(
 ```kotlin
 val service = SPR.sprLockerService()
 
-/ Get multiple locker basic information
+// Get multiple locker basic information
 service.getLockers(
     SdkToken,
     spacerIds,
