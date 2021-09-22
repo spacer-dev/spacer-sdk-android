@@ -55,7 +55,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository url: "file://${repo.absolutePath}"
-            pom.version = '0.0.3'
+            pom.version = '1.0.0'
             pom.groupId = 'com.spacer'
             pom.artifactId = 'sdk'
         }
