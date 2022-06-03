@@ -7,6 +7,9 @@ plugins {
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
+    def properties = new Properties()
+
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
     defaultConfig {
         applicationId "com.spacer.example"
@@ -15,12 +18,8 @@ android {
         versionCode 1
         versionName "1.0"
 
-        def properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
         def SDK_TOKEN = properties.getProperty("sdk.token")
         def SDK_BASE_URL = properties.getProperty("sdk.baseUrl")
-
         buildConfigField("String", "SDK_TOKEN", "\"${SDK_TOKEN}\"")
         buildConfigField("String", "SDK_BASE_URL", "\"${SDK_BASE_URL}\"")
 
