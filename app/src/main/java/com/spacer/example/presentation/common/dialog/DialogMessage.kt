@@ -35,5 +35,6 @@ class DialogMessage {
         val MyLockerShareUrlKeySuccess = DialogMessage(R.string.success_title, R.string.my_share_url_key_success_message)
         val SPRLockerGetSuccess = DialogMessage(R.string.success_title, R.string.spr_locker_get_success_message)
         val SPRLockerGetUnitSuccess = DialogMessage(R.string.success_title, R.string.spr_unit_get_success_message)
+        val SPRLocationGetSuccess = DialogMessage(R.string.success_title, R.string.spr_location_get_success_message)
     }
 }

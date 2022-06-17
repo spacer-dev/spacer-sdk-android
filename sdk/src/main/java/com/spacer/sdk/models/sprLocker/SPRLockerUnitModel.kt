@@ -9,6 +9,8 @@ class SPRLockerUnitModel(
     val open: String?,
     val close: String?,
     val address: String?,
+    val dispOrder: Number?,
+    val lockerType: Number?,
     val spacers: List<SPRLockerModel>?,
 ) {
     override fun toString(): String {
@@ -19,7 +21,7 @@ class SPRLockerUnitModel(
 
 fun SPRLockerUnitResData.toModel(): SPRLockerUnitModel {
     val spacers = spacers?.map { it.toModel() }
-    return SPRLockerUnitModel(id, open, close, address, spacers)
+    return SPRLockerUnitModel(id, open, close, address, dispOrder, lockerType, spacers)
 }
 
 class SPRLockerUnitGetReqDataMapper : IMapper<SPRLockerUnitGetResData, List<SPRLockerUnitModel>> {

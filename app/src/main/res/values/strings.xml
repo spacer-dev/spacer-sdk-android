@@ -61,4 +61,9 @@
     <string name="spr_unit_get_desc">get multiple locker unit basic information.</string>
     <string name="spr_unit_get_hint">enter unit ids separated by commas</string>
     <string name="spr_unit_get_success_message">succeeded in getting spr units</string>
+
+    <string name="spr_location_get_title">get units location</string>
+    <string name="spr_location_get_desc">get multiple unit location basic information.</string>
+    <string name="spr_location_get_hint">enter location id</string>
+    <string name="spr_location_get_success_message">succeeded in getting spr location</string>
 </resources>
