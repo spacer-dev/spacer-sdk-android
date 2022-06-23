@@ -57,6 +57,14 @@
                     app:listener="@{listener.unit}"
                     app:viewModel="@{viewModel.unit}" />
 
+                <include
+                    layout="@layout/view_card_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:listener="@{listener.location}"
+                    app:viewModel="@{viewModel.location}" />
+
             </LinearLayout>
 
         </LinearLayout>

@@ -7,5 +7,7 @@ data class SPRLockerUnitResData(
     val open: String?,
     val close: String?,
     val address: String?,
+    val dispOrder: Number?,
+    val lockerType: Number?,
     val spacers: List<SPRLockerResData>?
 ) : Serializable
