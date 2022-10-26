@@ -28,6 +28,11 @@
     <string name="cb_take_hint">enter spacer id</string>
     <string name="cb_take_success_message">succeeded in taking</string>
 
+    <string name="cb_open_for_maintenance_title">open for maintenance from locker</string>
+    <string name="cb_open_for_maintenance_desc">connect to locker with bluetooth and open for maintenance from locker.</string>
+    <string name="cb_open_for_maintenance_hint">enter spacer id</string>
+    <string name="cb_open_for_maintenance_success_message">succeeded in opening</string>
+
     <string name="cb_take_url_key_title">take from locker with url key</string>
     <string name="cb_take_url_key_desc">connect to locker with bluetooth and take luggage from locker with url key.</string>
     <string name="cb_take_url_key_hint">enter url key</string>
@@ -36,6 +41,10 @@
     <string name="my_get_title">get my lockers</string>
     <string name="my_get_desc">get a list of your lockers in use.</string>
     <string name="my_get_success_message">succeeded in getting my lockers</string>
+
+    <string name="my_maintenance_get_title">get my maintenance lockers</string>
+    <string name="my_maintenance_get_desc">get a list of your maintenance lockers in use.</string>
+    <string name="my_maintenance_success_message">succeeded in getting my maintenance lockers</string>
 
     <string name="my_reserve_title">reserve locker</string>
     <string name="my_reserve_desc">reserve available locker.</string>

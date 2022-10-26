@@ -43,6 +43,16 @@ class CBLockerListener(private val fragment: Fragment) {
         }
     }
 
+    val openForMaintenance = object : ICardInputViewListener {
+        override fun onClicked(text: String) {
+            val context = fragment.context ?: return
+
+            requester.run(DialogMessage.CbLockerOpenForMaintenanceSuccess) {
+                service.openForMaintenance(context, SdkToken, text, it)
+            }
+        }
+    }
+
     val takeUrlKey = object : ICardInputViewListener {
         override fun onClicked(text: String) {
             val context = fragment.context ?: return

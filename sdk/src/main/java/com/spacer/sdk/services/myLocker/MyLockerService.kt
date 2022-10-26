@@ -35,4 +35,10 @@ class MyLockerService {
 
         api.myLocker.shareUrlKey(token, params).enqueue(callback, mapper)
     }
+
+    fun getMyMaintenanceLocker(token: String, callback: IResultCallback<List<MyMaintenanceLockerModel>>) {
+        val mapper = MyMaintenanceLockerListResDataMapper()
+
+        api.myLocker.getMyMaintenance(token).enqueue(callback, mapper)
+    }
 }

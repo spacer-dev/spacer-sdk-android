@@ -4,10 +4,14 @@ import com.spacer.sdk.data.api.reqData.key.KeyGenerateReqData
 import com.spacer.sdk.data.api.reqData.key.KeyGenerateResultReqData
 import com.spacer.sdk.data.api.reqData.key.KeyGetReqData
 import com.spacer.sdk.data.api.reqData.key.KeyGetResultReqData
+import com.spacer.sdk.data.api.reqData.key.MaintenanceKeyGetReqData
+import com.spacer.sdk.data.api.reqData.key.MaintenanceKeyGetResultReqData
 import com.spacer.sdk.data.api.resData.key.KeyGenerateResData
 import com.spacer.sdk.data.api.resData.key.KeyGenerateResultResData
 import com.spacer.sdk.data.api.resData.key.KeyGetResData
 import com.spacer.sdk.data.api.resData.key.KeyGetResultResData
+import com.spacer.sdk.data.api.resData.key.MaintenanceKeyGetResData
+import com.spacer.sdk.data.api.resData.key.MaintenanceKeyGetResultResData
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Header
@@ -25,4 +29,10 @@ interface IKeyAPI {
 
     @POST("key/getResult")
     fun getResult(@Header(APIHeader.Token) token: String, @Body params: KeyGetResultReqData): Call<KeyGetResultResData>
+
+    @POST("key/maintenance/get")
+    fun getMaintenance(@Header(APIHeader.Token) token: String, @Body params: MaintenanceKeyGetReqData): Call<MaintenanceKeyGetResData>
+
+    @POST("key/maintenance/getResult")
+    fun getMaintenanceResult(@Header(APIHeader.Token) token: String, @Body params: MaintenanceKeyGetResultReqData): Call<MaintenanceKeyGetResultResData>
 }
