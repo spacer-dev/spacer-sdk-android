@@ -59,9 +59,9 @@ Please add INTERNET usage to access API with SDK
 Please request for the following two permissions　
 
 If Android SDK is 31
-　- Manifest.permission.BLUETOOTH_CONNECT
-　- Manifest.permission.BLUETOOTH_SCAN
-　- Manifest.permission.ACCESS_FINE_LOCATION
+  - Manifest.permission.BLUETOOTH_CONNECT
+  - Manifest.permission.BLUETOOTH_SCAN
+  - Manifest.permission.ACCESS_FINE_LOCATION
 
 If Android SDK is under 30
   - Manifest.permission.BLUETOOTH
