@@ -221,7 +221,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.spacer:sdk:1.0.0'  
+    implementation 'com.spacer:sdk:1.2.0'  
 } 
 ```
 

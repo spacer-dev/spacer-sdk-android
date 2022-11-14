@@ -49,7 +49,7 @@ android {
 }
 
 repositories {
-    maven { url 'https://raw.githubusercontent.com/asw-soi/spaccer-sdk-android-test/main/repository' }
+    maven { url 'https://raw.githubusercontent.com/spacer-dev/spacer-sdk-android/main/repository' }
 }
 
 dependencies {
