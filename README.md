@@ -36,7 +36,13 @@ Provides operation of the locker you are using
 Provides basic locker information
 
 - Get multiple locker basic information
-- Get multiple locker unit basic information  
+- Get multiple locker unit basic information
+
+### 4. Location Service
+
+Provides basic location information
+
+- Get multiple unit location basic information
   
 ## Requirement
 
@@ -170,7 +176,7 @@ val service = SPR.sprLockerService()
 
 // Get multiple locker basic information
 service.getLockers(
-    SdkToken,
+    token,
     spacerIds,
     object : IResultCallback<List<SPRLockerModel>> {
         override fun onSuccess(result: List<SPRLockerModel>) {}
@@ -179,12 +185,27 @@ service.getLockers(
 
 // Get multiple locker unit basic information
 service.getUnits(
-    SdkToken,
+    token,
     unitIds,
     object : IResultCallback<List<SPRLockerUnitModel>> {
         override fun onSuccess(result: List<SPRLockerUnitModel>) {}
         override fun onFailure(error: SPRError) {}
     })     
+```
+
+### 4. Location Service
+
+```kotlin
+val service = SPR.locationService()
+
+// Get multiple unit location basic information
+service.get(
+    token,
+    locationId,
+    object : IResultCallback<LocationModel> {
+        override fun onSuccess(result: LocationModel) {}
+        override fun onFailure(error: SPRError) {}
+    })    
 ```
 
 ## Example
