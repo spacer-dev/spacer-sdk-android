@@ -7,6 +7,7 @@ import com.spacer.sdk.data.SPRError
 import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.services.cbLocker.gatt.CBLockerGattPutService
 import com.spacer.sdk.services.cbLocker.gatt.CBLockerGattTakeService
+import com.spacer.sdk.services.cbLocker.gatt.CBLockerGattMaintenanceService
 
 class CBLockerScanConnectService : CBLockerScanService() {
     private lateinit var spacerId: String
@@ -37,6 +38,17 @@ class CBLockerScanConnectService : CBLockerScanService() {
             spacerId,
             object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) = CBLockerGattTakeService().connect(context, token, result, callback)
+                override fun onFailure(error: SPRError) = callback.onFailure(error)
+            }
+        )
+    }
+
+    fun openForMaintenance(context: Context, token: String, spacerId: String, callback: ICallback) {
+        scan(
+            context,
+            spacerId,
+            object : IResultCallback<CBLockerModel> {
+                override fun onSuccess(result: CBLockerModel) = CBLockerGattMaintenanceService().connect(context, token, result, callback)
                 override fun onFailure(error: SPRError) = callback.onFailure(error)
             }
         )

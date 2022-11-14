@@ -19,6 +19,7 @@ Provides locker operation using BLE
 - Scan lockers
 - Deposit your luggage in the locker
 - Take your luggage out of the locker
+- Temporarily unlock locker
 
 ### 2. My Locker Service
 
@@ -28,6 +29,7 @@ Provides operation of the locker you are using
 - Reserve an available locker
 - Cancel the reserved locker
 - Share your locker in use
+- Get maintenance lockers in use
 
 ### 3. SPR Locker Service
 
@@ -56,8 +58,14 @@ Please add INTERNET usage to access API with SDK
 
 Please request for the following two permissions　
 
-- Manifest.permission.BLUETOOTH
-- Manifest.permission.ACCESS_FINE_LOCATION　
+If Android SDK is 31
+  - Manifest.permission.BLUETOOTH_CONNECT
+  - Manifest.permission.BLUETOOTH_SCAN
+  - Manifest.permission.ACCESS_FINE_LOCATION
+
+If Android SDK is under 30
+  - Manifest.permission.BLUETOOTH
+  - Manifest.permission.ACCESS_FINE_LOCATION
 
 
 ### 1. CB Locker Service
@@ -92,7 +100,17 @@ service.take(
     object : ICallback {
         override fun onSuccess() {}
         override fun onFailure(error: SPRError) {}
-    })  
+    })
+
+// Temporarily unlock locker
+service.openForMaintenance(
+    context,
+    token,
+    spacerId,
+    object : ICallback {
+        override fun onSuccess() {}
+        override fun onFailure(error: SPRError) {}
+    })
 
 ```
 
@@ -133,6 +151,14 @@ service.shareUrlKey(
     spacerId,
     object : IResultCallback<MyLockerModel> {
         override fun onSuccess(result: MyLockerModel) {}
+        override fun onFailure(error: SPRError) {}
+    })
+
+// Get maintenance lockers in use
+service.getMyMaintenanceLocker(
+    token,
+    object : IResultCallback<List<MyMaintenanceLockerModel>> {
+        override fun onSuccess(result: List<MyMaintenanceLockerModel>) {}
         override fun onFailure(error: SPRError) {}
     })
 ```

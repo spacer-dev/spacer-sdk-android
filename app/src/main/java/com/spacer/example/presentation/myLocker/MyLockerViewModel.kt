@@ -12,4 +12,5 @@ class MyLockerViewModel : ViewModel() {
     var reserveCancel =
         CardViewModel().apply { init(R.string.my_reserve_cancel_title, R.string.my_reserve_cancel_desc, R.string.my_reserve_cancel_hint) }
     var shareUrlKey = CardViewModel().apply { init(R.string.my_share_url_key_title, R.string.my_share_url_key_desc, R.string.my_share_url_key_hint) }
+    var getMyMaintenanceLocker = CardViewModel().apply { init(R.string.my_maintenance_get_title, R.string.my_maintenance_get_desc) }
 }
