@@ -24,7 +24,7 @@
     <remote-repository>
       <option name="id" value="maven" />
       <option name="name" value="maven" />
-      <option name="url" value="https://raw.githubusercontent.com/asw-soi/spaccer-sdk-android-test/main/repository" />
+      <option name="url" value="https://raw.githubusercontent.com/spacer-dev/spacer-sdk-android/main/repository" />
     </remote-repository>
   </component>
 </project>

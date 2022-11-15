@@ -72,6 +72,14 @@
                     app:listener="@{listener.shareUrlKey}"
                     app:viewModel="@{viewModel.shareUrlKey}" />
 
+                <include
+                    layout="@layout/view_card_simple"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:listener="@{listener.getMyMaintenanceLocker}"
+                    app:viewModel="@{viewModel.getMyMaintenanceLocker}" />
+
 
             </LinearLayout>
 

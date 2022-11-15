@@ -23,6 +23,10 @@ class CBLockerService {
         CBLockerScanConnectService().take(context, token, spacerId, callback)
     }
 
+    fun openForMaintenance(context: Context, token: String, spacerId: String, callback: ICallback) {
+        CBLockerScanConnectService().openForMaintenance(context, token, spacerId, callback)
+    }
+
     fun takeWithUrlKey(context: Context, token: String, urlKey: String, callback: ICallback) {
         MyLockerService().shareUrlKey(
             token,

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.0"
     def properties = new Properties()
 
@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.spacer.example"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -49,7 +49,7 @@ android {
 }
 
 repositories {
-    maven { url 'https://raw.githubusercontent.com/asw-soi/spaccer-sdk-android-test/main/repository' }
+    maven { url 'https://raw.githubusercontent.com/spacer-dev/spacer-sdk-android/main/repository' }
 }
 
 dependencies {
@@ -76,6 +76,6 @@ dependencies {
     implementation "org.koin:koin-androidx-scope:2.0.1"
     implementation "org.koin:koin-androidx-viewmodel:2.0.1"
 
-//    implementation 'com.spacer:sdk:1.1.0'
+//    implementation 'com.spacer:sdk:1.2.0'
     implementation project(":sdk")
 }

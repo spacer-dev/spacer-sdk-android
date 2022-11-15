@@ -21,4 +21,7 @@ interface IMyLockerAPI {
 
     @POST("myLocker/shared")
     fun shareUrlKey(@Header(APIHeader.Token) token: String, @Body params: MyLockerShareUrlKeyReqData): Call<MyLockerShareUrlKeyResData>
+
+    @POST("myLocker/maintenance/get")
+    fun getMyMaintenance(@Header(APIHeader.Token) token: String): Call<MyMaintenanceLockerGetResData>
 }

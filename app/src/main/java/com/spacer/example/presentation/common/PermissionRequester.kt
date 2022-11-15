@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.os.Build
 
 class PermissionRequester(private val activity: Activity) {
     fun run() {
@@ -23,9 +24,16 @@ class PermissionRequester(private val activity: Activity) {
 
     companion object {
         const val REQUEST_CODE = 1001
-        val permissionNames = mapOf(
+        private val permissionNamesSdkVersionOver30 = mapOf(
+            Manifest.permission.BLUETOOTH_CONNECT to "Bluetooth接続",
+            Manifest.permission.BLUETOOTH_SCAN to "Bluetooth検出",
+            Manifest.permission.ACCESS_FINE_LOCATION to "Location"
+        )
+
+        private val permissionNamesSdkVersion30OrLess = mapOf(
             Manifest.permission.BLUETOOTH to "Bluetooth",
             Manifest.permission.ACCESS_FINE_LOCATION to "Location"
         )
+        val permissionNames = if (Build.VERSION.SDK_INT > 30) permissionNamesSdkVersionOver30 else permissionNamesSdkVersion30OrLess
     }
 }

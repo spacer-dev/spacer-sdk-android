@@ -8,6 +8,7 @@ import com.spacer.example.presentation.common.card.ICardSimpleViewListener
 import com.spacer.example.presentation.common.dialog.DialogMessage
 import com.spacer.sdk.SPR
 import com.spacer.sdk.models.myLocker.MyLockerModel
+import com.spacer.sdk.models.myLocker.MyMaintenanceLockerModel
 
 class MyLockerListener(fragment: Fragment) {
     private val service = SPR.myLockerService()
@@ -41,6 +42,14 @@ class MyLockerListener(fragment: Fragment) {
         override fun onClicked(text: String) {
             requester.runGet<MyLockerModel>(DialogMessage.MyLockerShareUrlKeySuccess) {
                 SPR.myLockerService().shareUrlKey(SdkToken, text, it)
+            }
+        }
+    }
+
+    val getMyMaintenanceLocker = object : ICardSimpleViewListener {
+        override fun onClicked() {
+            requester.runList<MyMaintenanceLockerModel>(DialogMessage.MyMaintenanceLockerGetSuccess) {
+                service.getMyMaintenanceLocker(SdkToken, it)
             }
         }
     }
