@@ -9,6 +9,8 @@ class CBLockerConst {
         const val DEVICE_TAKE_PREFIX = "543214723567xxxw"
 
         val ScanMills = SPR.config.scanMills
+        val ConnectMills = SPR.config.connectMills
+        val MaxRetryNum = SPR.config.maxRetryNum
         val DeviceServiceUUID = UUID.fromString("0000ff10-0000-1000-8000-00805f9b34fb")!!
         val DeviceCharacteristicUUID = UUID.fromString("0000ff11-0000-1000-8000-00805f9b34fb")!!
     }

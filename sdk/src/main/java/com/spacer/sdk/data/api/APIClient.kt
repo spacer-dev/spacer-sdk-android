@@ -1,6 +1,8 @@
 package com.spacer.sdk.data.api
 
 import android.os.Build
+import com.spacer.sdk.data.extensions.LoggerExtensions.logd
+import com.spacer.sdk.values.cbLocker.CBLockerConst
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,7 +21,17 @@ class APIClient {
                 .addHeader("Accept", "application/json")
                 .addHeader("User-Agent", userAgent)
                 .build()
-            return@Interceptor chain.proceed(request)
+            var response = chain.proceed(request)
+
+            var retryCount = 0
+            while (!response.isSuccessful && retryCount < CBLockerConst.MaxRetryNum){
+                retryCount++
+                logd("リトライ回数$retryCount")
+
+                response.close()
+                response = chain.proceed(request)
+            }
+            return@Interceptor response
         }
 
     private val userAgent: String

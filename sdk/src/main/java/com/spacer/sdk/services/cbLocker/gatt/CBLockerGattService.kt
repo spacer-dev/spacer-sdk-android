@@ -2,6 +2,8 @@ package com.spacer.sdk.services.cbLocker.gatt
 
 import android.bluetooth.*
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import com.spacer.sdk.data.ICallback
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
@@ -15,9 +17,12 @@ open class CBLockerGattService {
     protected lateinit var cbLocker: CBLockerModel
     private lateinit var gattCallback: CBLockerGattCallback
     protected var needsFirstRead: Boolean = false
+    private var connectHandler = Handler(Looper.getMainLooper())
 
     protected val spacerId get() = cbLocker.spacerId
     private val bluetoothAdapter get() = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+    private var connectRetryCnt = 0
+    private var isFinish = false
 
     open fun connect(context: Context, cbLocker: CBLockerModel, gattCallback: CBLockerGattCallback, needsFirstRead: Boolean) {
         logd("connect: ${cbLocker.spacerId} ")
@@ -28,9 +33,10 @@ open class CBLockerGattService {
         this.needsFirstRead = needsFirstRead
 
         connectRemoteDevice()
+        postDelayedAfterConnect()
     }
 
-    private fun connectRemoteDevice() {
+    private fun connectRemoteDevice(): Runnable {
         val remoteDevice = bluetoothAdapter.getRemoteDevice(cbLocker.address)
         remoteDevice.connectGatt(
             context,
@@ -38,6 +44,25 @@ open class CBLockerGattService {
             gattCallback,
             BluetoothDevice.TRANSPORT_LE
         )
+    }
+
+    protected open fun postDelayedAfterConnect() {
+        val runnable = object : Runnable {
+            override fun run() {
+                if (isFinish) return
+                bluetoothAdapter.cancelDiscovery()
+
+                connectRetryCnt++
+                logd("########## connectRetryCnt: $connectRetryCnt")
+                if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
+                    gattCallback.onFailure(SPRError.CBConnectDuringTimeout)
+                } else {
+                    connectRemoteDevice()
+                    connectHandler.postDelayed(this, CBLockerConst.ConnectMills)
+                }
+            }
+        }
+        connectHandler.postDelayed(runnable, CBLockerConst.ConnectMills)
     }
 
     open inner class CBLockerGattCallback : BluetoothGattCallback(), ICallback {
@@ -144,11 +169,13 @@ open class CBLockerGattService {
         }
 
         private fun BluetoothGatt.success() {
+            isFinish = true
             onSuccess()
             reset()
         }
 
         private fun BluetoothGatt.fail(error: SPRError) {
+            isFinish = true
             onFailure(error)
             reset()
         }

@@ -30,5 +30,6 @@ data class SPRError(
         val CBCharacteristicNotFound = SPRError("E22011002", "peripheral characteristic is not found")
         val CBReadingCharacteristicFailed = SPRError("E22011003", "peripheral reading characteristic failed")
         val CBWritingCharacteristicFailed = SPRError("E22011004", "peripheral writing characteristic failed")
+        val CBConnectDuringTimeout = SPRError("E22011005", "timeout occurred during connection processing")
     }
 }
