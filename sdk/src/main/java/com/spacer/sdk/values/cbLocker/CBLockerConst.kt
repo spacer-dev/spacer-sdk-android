@@ -7,7 +7,7 @@ class CBLockerConst {
     companion object {
         const val DEVICE_PUT_PREFIX = "543214723567xxxrw"
         const val DEVICE_TAKE_PREFIX = "543214723567xxxw"
-        const val ConnectMills: Long = 7000
+        const val ConnectMills: Long = 5000
 
         val ScanMills = SPR.config.scanMills
         val MaxRetryNum = SPR.config.maxRetryNum

@@ -53,10 +53,10 @@ open class CBLockerGattService {
                 isRetry = true
 
                 connectRetryCnt++
-                logd("########## connectRetryCnt: $connectRetryCnt")
                 if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
                     gattCallback.onFailure(SPRError.CBConnectDuringTimeout)
                 } else {
+                    logd("########## connectRetryCnt: $connectRetryCnt")
                     connectRemoteDevice()
                     connectHandler.postDelayed(this, CBLockerConst.ConnectMills)
                 }
@@ -175,6 +175,9 @@ open class CBLockerGattService {
         }
 
         private fun BluetoothGatt.fail(error: SPRError) {
+            if (connectRetryCnt < CBLockerConst.MaxRetryNum) {
+                return
+            }
             onFailure(error)
             reset()
         }
