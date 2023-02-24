@@ -13,6 +13,7 @@ import com.spacer.sdk.data.api.resData.key.KeyGenerateResData
 import com.spacer.sdk.data.extensions.RetrofitCallExtensions.enqueue
 import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.values.cbLocker.CBLockerConst
+import com.spacer.sdk.values.cbLocker.CBLockerGattActionType
 
 class CBLockerGattPutService : CBLockerGattService() {
     private lateinit var token: String
@@ -23,7 +24,7 @@ class CBLockerGattPutService : CBLockerGattService() {
         this.callback = callback
 
         val gattCallback = CBLockerGattPutCallback()
-        super.connect(context, cbLocker, gattCallback, needsFirstRead = true)
+        super.connect(context, cbLocker, gattCallback, CBLockerGattActionType.Put)
     }
 
     private open inner class CBLockerGattPutCallback : CBLockerGattCallback() {
