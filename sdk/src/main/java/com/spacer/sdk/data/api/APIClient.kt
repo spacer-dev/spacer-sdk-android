@@ -26,7 +26,6 @@ class APIClient {
             var retryCount = 0
             while (!response.isSuccessful && retryCount < CBLockerConst.MaxRetryNum){
                 retryCount++
-                logd("リトライ回数$retryCount")
 
                 response.close()
                 response = chain.proceed(request)

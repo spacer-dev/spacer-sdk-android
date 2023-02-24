@@ -13,8 +13,8 @@ class CBLockerConst {
         val MaxRetryNum = SPR.config.maxRetryNum
         val DeviceServiceUUID = UUID.fromString("0000ff10-0000-1000-8000-00805f9b34fb")!!
         val DeviceCharacteristicUUID = UUID.fromString("0000ff11-0000-1000-8000-00805f9b34fb")!!
-        val UsingReadData: List<String>  = listOf("using")
-        val WriteReadData: List<String>  = listOf("rwsuccess", "wsuccess")
-        val UsingOrWriteReadData: List<String>  = UsingReadData + WriteReadData
+        val UsingReadData: List<String> = listOf("using")
+        val WriteReadData: List<String> = listOf("rwsuccess", "wsuccess")
+        val UsingOrWriteReadData: List<String> = UsingReadData + WriteReadData
     }
 }

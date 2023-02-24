@@ -18,12 +18,13 @@ open class CBLockerGattService {
     protected lateinit var cbLocker: CBLockerModel
     private lateinit var connectHandler: Handler
     private lateinit var gattCallback: CBLockerGattCallback
-    protected lateinit var actionType: CBLockerGattActionType
+    private lateinit var actionType: CBLockerGattActionType
+    private lateinit var gatt: BluetoothGatt
 
     protected val spacerId get() = cbLocker.spacerId
     private val bluetoothAdapter get() = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
     private var connectRetryCnt = 0
-    private var connectSuccess = false
+    private var isFinish = false
     private var isRetry = false
 
     open fun connect(context: Context, cbLocker: CBLockerModel, gattCallback: CBLockerGattCallback, actionType: CBLockerGattActionType) {
@@ -41,7 +42,7 @@ open class CBLockerGattService {
 
     private fun connectRemoteDevice() {
         val remoteDevice = bluetoothAdapter.getRemoteDevice(cbLocker.address)
-        remoteDevice.connectGatt(
+        gatt = remoteDevice.connectGatt(
             context, false, gattCallback, BluetoothDevice.TRANSPORT_LE
         )
     }
@@ -49,14 +50,14 @@ open class CBLockerGattService {
     protected open fun postDelayedRunnable() {
         val runnable = object : Runnable {
             override fun run() {
-                if (connectSuccess) return
+                if (isFinish) return
+                gatt.close()
                 isRetry = true
 
                 connectRetryCnt++
                 if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
                     gattCallback.onFailure(SPRError.CBConnectDuringTimeout)
                 } else {
-                    logd("########## connectRetryCnt: $connectRetryCnt")
                     connectRemoteDevice()
                     connectHandler.postDelayed(this, CBLockerConst.ConnectMills)
                 }
@@ -164,7 +165,7 @@ open class CBLockerGattService {
         }
 
         private fun BluetoothGatt.reset() {
-            connectSuccess = true
+            isFinish = true
             cbLocker.reset()
             disconnect()
         }
@@ -188,7 +189,7 @@ open class CBLockerGattService {
             return when (actionType) {
                 CBLockerGattActionType.Put -> CBLockerConst.UsingOrWriteReadData.contains(readValue)
                 CBLockerGattActionType.Take -> !CBLockerConst.UsingReadData.contains(readValue)
-                CBLockerGattActionType.OpenForMaintenance -> CBLockerConst.UsingOrWriteReadData.contains(readValue)
+                CBLockerGattActionType.OpenForMaintenance -> cbLocker.status == CBLockerGattStatus.Write
             }
         }
     }
