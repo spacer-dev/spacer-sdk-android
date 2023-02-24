@@ -20,22 +20,22 @@
 
     <string name="cb_put_title">put in locker</string>
     <string name="cb_put_desc">connect to locker with bluetooth and put your luggage in locker.</string>
-    <string name="cb_put_hint">enter spacer id</string>
+    <string name="cb_put_hint">spacer id</string>
     <string name="cb_put_success_message">succeeded in putting</string>
 
     <string name="cb_take_title">take from locker</string>
     <string name="cb_take_desc">connect to locker with bluetooth and take luggage from locker.</string>
-    <string name="cb_take_hint">enter spacer id</string>
+    <string name="cb_take_hint">spacer id</string>
     <string name="cb_take_success_message">succeeded in taking</string>
 
     <string name="cb_open_for_maintenance_title">open for maintenance from locker</string>
     <string name="cb_open_for_maintenance_desc">connect to locker with bluetooth and open for maintenance from locker.</string>
-    <string name="cb_open_for_maintenance_hint">enter spacer id</string>
+    <string name="cb_open_for_maintenance_hint">spacer id</string>
     <string name="cb_open_for_maintenance_success_message">succeeded in opening</string>
 
     <string name="cb_take_url_key_title">take from locker with url key</string>
     <string name="cb_take_url_key_desc">connect to locker with bluetooth and take luggage from locker with url key.</string>
-    <string name="cb_take_url_key_hint">enter url key</string>
+    <string name="cb_take_url_key_hint">url key</string>
     <string name="cb_take_url_key_success_message">succeeded in taking with url key</string>
 
     <string name="my_get_title">get my lockers</string>
@@ -48,31 +48,31 @@
 
     <string name="my_reserve_title">reserve locker</string>
     <string name="my_reserve_desc">reserve available locker.</string>
-    <string name="my_reserve_hint">enter spacer id</string>
+    <string name="my_reserve_hint">spacer id</string>
     <string name="my_reserve_success_message">succeeded in making a reservation</string>
 
     <string name="my_reserve_cancel_title">cancel reservation</string>
     <string name="my_reserve_cancel_desc">cancel locker you reserved.</string>
-    <string name="my_reserve_cancel_hint">enter spacer id</string>
+    <string name="my_reserve_cancel_hint">spacer id</string>
     <string name="my_reserve_cancel_success_message">succeeded in canceling the reservation</string>
 
     <string name="my_share_url_key_title">share locker</string>
     <string name="my_share_url_key_desc">share locker with yourself using url key.</string>
-    <string name="my_share_url_key_hint">enter url key</string>
+    <string name="my_share_url_key_hint">url key</string>
     <string name="my_share_url_key_success_message">succeeded in sharing the url key</string>
 
     <string name="spr_locker_get_title">get lockers</string>
     <string name="spr_locker_get_desc">get multiple locker basic information.</string>
-    <string name="spr_locker_get_hint">enter spacer ids separated by commas</string>
+    <string name="spr_locker_get_hint">spacer ids separated by commas</string>
     <string name="spr_locker_get_success_message">succeeded in getting spr lockers</string>
 
     <string name="spr_unit_get_title">get locker units</string>
     <string name="spr_unit_get_desc">get multiple locker unit basic information.</string>
-    <string name="spr_unit_get_hint">enter unit ids separated by commas</string>
+    <string name="spr_unit_get_hint">unit ids separated by commas</string>
     <string name="spr_unit_get_success_message">succeeded in getting spr units</string>
 
     <string name="spr_location_get_title">get location</string>
     <string name="spr_location_get_desc">get multiple unit location basic information.</string>
-    <string name="spr_location_get_hint">enter location id</string>
+    <string name="spr_location_get_hint">location id</string>
     <string name="spr_location_get_success_message">succeeded in getting spr location</string>
 </resources>

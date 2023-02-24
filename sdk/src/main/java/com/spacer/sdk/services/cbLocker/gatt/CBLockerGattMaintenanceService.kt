@@ -12,6 +12,7 @@ import com.spacer.sdk.data.api.reqData.key.MaintenanceKeyGetResultReqData
 import com.spacer.sdk.data.api.resData.key.MaintenanceKeyGetResData
 import com.spacer.sdk.data.extensions.RetrofitCallExtensions.enqueue
 import com.spacer.sdk.models.cbLocker.CBLockerModel
+import com.spacer.sdk.values.cbLocker.CBLockerGattActionType
 
 class CBLockerGattMaintenanceService : CBLockerGattService() {
     private lateinit var token: String
@@ -22,7 +23,7 @@ class CBLockerGattMaintenanceService : CBLockerGattService() {
         this.callback = callback
 
         val gattCallback = CBLockerGattMaintenanceCallback()
-        super.connect(context, cbLocker, gattCallback, needsFirstRead = false)
+        super.connect(context, cbLocker, gattCallback, CBLockerGattActionType.OpenForMaintenance)
     }
 
     private open inner class CBLockerGattMaintenanceCallback : CBLockerGattCallback() {
