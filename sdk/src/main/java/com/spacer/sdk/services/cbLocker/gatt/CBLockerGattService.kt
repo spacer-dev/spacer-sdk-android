@@ -9,9 +9,7 @@ import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
 import com.spacer.sdk.data.extensions.LoggerExtensions.logd
 import com.spacer.sdk.models.cbLocker.CBLockerModel
-import com.spacer.sdk.values.cbLocker.CBLockerConst
-import com.spacer.sdk.values.cbLocker.CBLockerGattActionType
-import com.spacer.sdk.values.cbLocker.CBLockerGattStatus
+import com.spacer.sdk.values.cbLocker.*
 
 open class CBLockerGattService {
     private lateinit var context: Context
@@ -24,8 +22,23 @@ open class CBLockerGattService {
     protected val spacerId get() = cbLocker.spacerId
     private val bluetoothAdapter get() = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
     private var connectRetryCnt = 0
-    private var isFinish = false
     private var isRetry = false
+    private var timeout = CBLockerConnectTimeouts { error ->
+        gatt.disconnect()
+        gatt.close()
+        clearAll()
+        isRetry = true
+
+        connectRetryCnt++
+        if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
+            cbLocker.reset()
+            gattCallback.onFailure(error)
+        } else {
+            logd("########## connectRetryCnt: $connectRetryCnt")
+            connectRemoteDevice()
+        }
+    }
+
 
     open fun connect(context: Context, cbLocker: CBLockerModel, gattCallback: CBLockerGattCallback, actionType: CBLockerGattActionType) {
         logd("connect: ${cbLocker.spacerId} ")
@@ -37,43 +50,32 @@ open class CBLockerGattService {
         this.actionType = actionType
 
         connectRemoteDevice()
-        postDelayedRunnable()
     }
 
     private fun connectRemoteDevice() {
+        clearAll()
         val remoteDevice = bluetoothAdapter.getRemoteDevice(cbLocker.address)
         gatt = remoteDevice.connectGatt(
             context, false, gattCallback, BluetoothDevice.TRANSPORT_LE
         )
+        timeout.during.set()
+        timeout.start.set()
     }
 
-    protected open fun postDelayedRunnable() {
-        val runnable = object : Runnable {
-            override fun run() {
-                if (isFinish) return
-                gatt.close()
-                isRetry = true
-
-                connectRetryCnt++
-                if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
-                    gattCallback.onFailure(SPRError.CBConnectDuringTimeout)
-                } else {
-                    connectRemoteDevice()
-                    connectHandler.postDelayed(this, CBLockerConst.ConnectMills)
-                }
-            }
-        }
-        connectHandler.postDelayed(runnable, CBLockerConst.ConnectMills)
+    private fun clearAll() {
+        timeout.clearAll()
     }
 
     open inner class CBLockerGattCallback : BluetoothGattCallback(), ICallback {
 
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            timeout.start.clear()
             logd("onConnectionStateChange: $status, $newState")
 
             when {
                 newState == BluetoothGatt.STATE_CONNECTED -> {
                     gatt.discoverServices()
+                    timeout.discover.set()
                 }
                 status == GATT_ERROR_STATE -> {
                     connectRemoteDevice()
@@ -85,6 +87,8 @@ open class CBLockerGattService {
         }
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            timeout.discover.clear()
+            logd("onServicesDiscovered: $status")
             if (status != BluetoothGatt.GATT_SUCCESS) {
                 return gatt.fail(SPRError.CBServiceNotFound)
             }
@@ -96,6 +100,11 @@ open class CBLockerGattService {
             )
 
             gatt.readCharacteristic(characteristic)
+            if (cbLocker.status == CBLockerGattStatus.None) {
+                timeout.readBeforeWrite.set()
+            } else {
+                timeout.readAfterWrite.set()
+            }
         }
 
         override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
@@ -104,6 +113,11 @@ open class CBLockerGattService {
 
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
             logd("onCharacteristicRead: $status")
+            if (cbLocker.status == CBLockerGattStatus.None) {
+                timeout.readBeforeWrite.clear()
+            } else {
+                timeout.readAfterWrite.clear()
+            }
 
             if (BluetoothGatt.GATT_SUCCESS != status) {
                 return gatt.fail(SPRError.CBReadingCharacteristicFailed)
@@ -122,12 +136,14 @@ open class CBLockerGattService {
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
             logd("onCharacteristicWrite: $status")
+            timeout.write.clear()
 
             if (BluetoothGatt.GATT_SUCCESS != status) {
                 return gatt.fail(SPRError.CBWritingCharacteristicFailed)
             }
             cbLocker.update(CBLockerGattStatus.Write)
             gatt.readCharacteristic(characteristic)
+            timeout.readAfterWrite.set()
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
@@ -147,6 +163,7 @@ open class CBLockerGattService {
                 override fun onSuccess(result: ByteArray) {
                     characteristic.value = result
                     writeCharacteristic(characteristic)
+                    timeout.write.set()
                 }
 
                 override fun onFailure(error: SPRError) = fail(error)
@@ -165,9 +182,9 @@ open class CBLockerGattService {
         }
 
         private fun BluetoothGatt.reset() {
-            isFinish = true
             cbLocker.reset()
             disconnect()
+            clearAll()
         }
 
         private fun BluetoothGatt.success() {
@@ -176,11 +193,16 @@ open class CBLockerGattService {
         }
 
         private fun BluetoothGatt.fail(error: SPRError) {
-            if (connectRetryCnt < CBLockerConst.MaxRetryNum) {
-                return
+            connectRetryCnt++
+            if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
+                onFailure(error)
+                reset()
+            } else {
+                disconnect()
+                close()
+                logd("########## connectRetryCnt: $connectRetryCnt")
+                connectRemoteDevice()
             }
-            onFailure(error)
-            reset()
         }
 
         protected fun BluetoothGattCharacteristic.readData() = this.value.toString(Charsets.UTF_8)
