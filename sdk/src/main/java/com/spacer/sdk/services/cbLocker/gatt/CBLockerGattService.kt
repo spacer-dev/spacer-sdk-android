@@ -33,7 +33,6 @@ open class CBLockerGattService {
             gattCallback.onFailure(error)
         } else {
             isRetry = true
-            logd("########## connectRetryCnt: $connectRetryCnt")
             connectRemoteDevice()
         }
     }
@@ -83,7 +82,6 @@ open class CBLockerGattService {
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             timeout.discover.clear()
-            logd("onServicesDiscovered: $status")
             if (status != BluetoothGatt.GATT_SUCCESS) {
                 return gatt.fail(SPRError.CBServiceNotFound)
             }
@@ -196,7 +194,6 @@ open class CBLockerGattService {
                 isRetry = true
                 disconnect()
                 close()
-                logd("########## connectRetryCnt: $connectRetryCnt")
                 connectRemoteDevice()
             }
         }

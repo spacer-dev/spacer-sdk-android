@@ -31,11 +31,11 @@ data class SPRError(
         val CBReadingCharacteristicFailed = SPRError("E22011003", "peripheral reading characteristic failed")
         val CBWritingCharacteristicFailed = SPRError("E22011004", "peripheral writing characteristic failed")
 
-        val CBConnectStartTimeout = SPRError("E21011201", "timeout occurred while connecting to peripheral")
-        val CBConnectDiscoverTimeout = SPRError("E21011202", "timeout occurred while discovering characteristic")
-        val CBConnectReadTimeoutBeforeWrite = SPRError("E21011203", "timeout occurred while reading the value of the characteristic before write")
-        val CBConnectReadTimeoutAfterWrite = SPRError("E21011204", "timeout occurred while reading the value of the characteristic after write")
-        val CBConnectWriteTimeout = SPRError("E21011205", "timeout occurred while writing value to characteristic")
-        val CBConnectDuringTimeout = SPRError("E21011206", "timeout occurred during connection processing")
+        val CBConnectStartTimeout = SPRError("E22011201", "timeout occurred while connecting to peripheral")
+        val CBConnectDiscoverTimeout = SPRError("E22011202", "timeout occurred while discovering characteristic")
+        val CBConnectReadTimeoutBeforeWrite = SPRError("E22011203", "timeout occurred while reading the value of the characteristic before write")
+        val CBConnectReadTimeoutAfterWrite = SPRError("E22011204", "timeout occurred while reading the value of the characteristic after write")
+        val CBConnectWriteTimeout = SPRError("E22011205", "timeout occurred while writing value to characteristic")
+        val CBConnectDuringTimeout = SPRError("E22011206", "timeout occurred during connection processing")
     }
 }
