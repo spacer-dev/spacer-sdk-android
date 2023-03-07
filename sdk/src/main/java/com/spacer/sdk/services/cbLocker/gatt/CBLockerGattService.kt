@@ -26,14 +26,13 @@ open class CBLockerGattService {
     private var timeout = CBLockerConnectTimeouts { error ->
         gatt.disconnect()
         gatt.close()
-        clearAll()
-        isRetry = true
 
         connectRetryCnt++
         if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
             cbLocker.reset()
             gattCallback.onFailure(error)
         } else {
+            isRetry = true
             logd("########## connectRetryCnt: $connectRetryCnt")
             connectRemoteDevice()
         }
@@ -53,17 +52,13 @@ open class CBLockerGattService {
     }
 
     private fun connectRemoteDevice() {
-        clearAll()
+        timeout.clearAll()
         val remoteDevice = bluetoothAdapter.getRemoteDevice(cbLocker.address)
         gatt = remoteDevice.connectGatt(
             context, false, gattCallback, BluetoothDevice.TRANSPORT_LE
         )
         timeout.during.set()
         timeout.start.set()
-    }
-
-    private fun clearAll() {
-        timeout.clearAll()
     }
 
     open inner class CBLockerGattCallback : BluetoothGattCallback(), ICallback {
@@ -184,7 +179,7 @@ open class CBLockerGattService {
         private fun BluetoothGatt.reset() {
             cbLocker.reset()
             disconnect()
-            clearAll()
+            timeout.clearAll()
         }
 
         private fun BluetoothGatt.success() {
@@ -198,6 +193,7 @@ open class CBLockerGattService {
                 onFailure(error)
                 reset()
             } else {
+                isRetry = true
                 disconnect()
                 close()
                 logd("########## connectRetryCnt: $connectRetryCnt")
