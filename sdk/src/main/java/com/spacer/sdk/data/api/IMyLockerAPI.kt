@@ -6,22 +6,22 @@ import com.spacer.sdk.data.api.reqData.myLocker.MyLockerShareUrlKeyReqData
 import com.spacer.sdk.data.api.resData.myLocker.*
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.Header
+import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 
 interface IMyLockerAPI {
     @POST("myLocker/get")
-    fun get(@Header(APIHeader.Token) token: String): Call<MyLockerGetResData>
+    fun get(@HeaderMap headers: Map<String, String>): Call<MyLockerGetResData>
 
     @POST("myLocker/reserve")
-    fun reserve(@Header(APIHeader.Token) token: String, @Body params: MyLockerReserveReqData): Call<MyLockerReserveResData>
+    fun reserve(@HeaderMap headers: Map<String, String>, @Body params: MyLockerReserveReqData): Call<MyLockerReserveResData>
 
     @POST("myLocker/reserveCancel")
-    fun reserveCancel(@Header(APIHeader.Token) token: String, @Body params: MyLockerReserveCancelReqData): Call<MyLockerReserveCancelResData>
+    fun reserveCancel(@HeaderMap headers: Map<String, String>, @Body params: MyLockerReserveCancelReqData): Call<MyLockerReserveCancelResData>
 
     @POST("myLocker/shared")
-    fun shareUrlKey(@Header(APIHeader.Token) token: String, @Body params: MyLockerShareUrlKeyReqData): Call<MyLockerShareUrlKeyResData>
+    fun shareUrlKey(@HeaderMap headers: Map<String, String>, @Body params: MyLockerShareUrlKeyReqData): Call<MyLockerShareUrlKeyResData>
 
     @POST("myLocker/maintenance/get")
-    fun getMyMaintenance(@Header(APIHeader.Token) token: String): Call<MyMaintenanceLockerGetResData>
+    fun getMyMaintenance(@HeaderMap headers: Map<String, String>): Call<MyMaintenanceLockerGetResData>
 }
