@@ -14,11 +14,13 @@ class APIHeader {
     companion object {
         private const val ExTokenHeader = "X-Spacer-ExApp-Token"
         private const val AppTokenHeader = "Authorization"
+        private const val appTypeHeader = "X-App-Type"
 
         fun createHeader(token: String): Map<String, String> {
             return if (APIConst.ApiType == APIType.App) {
                 mapOf(
-                    AppTokenHeader to "Bearer $token"
+                    AppTokenHeader to "Bearer $token",
+                    appTypeHeader to "SDK"
                 )
             } else {
                 mapOf(
