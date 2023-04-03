@@ -26,6 +26,7 @@ open class CBLockerGattService {
     private var timeout = CBLockerConnectTimeouts { error ->
         gatt.disconnect()
         gatt.close()
+        timeoutClearAll()
 
         connectRetryCnt++
         if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
@@ -58,6 +59,10 @@ open class CBLockerGattService {
         )
         timeout.during.set()
         timeout.start.set()
+    }
+
+    private fun timeoutClearAll(){
+        timeout.clearAll()
     }
 
     open inner class CBLockerGattCallback : BluetoothGattCallback(), ICallback {

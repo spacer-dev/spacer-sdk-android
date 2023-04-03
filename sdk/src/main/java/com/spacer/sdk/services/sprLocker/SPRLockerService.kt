@@ -1,6 +1,7 @@
 package com.spacer.sdk.services.sprLocker
 
 import com.spacer.sdk.data.IResultCallback
+import com.spacer.sdk.data.api.APIHeader
 import com.spacer.sdk.data.api.api
 import com.spacer.sdk.data.api.reqData.sprLocker.SPRLockerGetReqData
 import com.spacer.sdk.data.api.reqData.sprLocker.SPRLockerUnitGetReqData
@@ -15,13 +16,13 @@ class SPRLockerService {
         val params = SPRLockerGetReqData(spacerIds)
         val mapper = SPRLockerListMapper()
 
-        api.sprLocker.getLockers(token, params).enqueue(callback, mapper)
+        api.sprLocker.getLockers(APIHeader.createHeader(token), params).enqueue(callback, mapper)
     }
 
     fun getUnits(token: String, unitIds: List<String>, callback: IResultCallback<List<SPRLockerUnitModel>>) {
         val params = SPRLockerUnitGetReqData(unitIds)
         val mapper = SPRLockerUnitGetReqDataMapper()
 
-        api.sprLocker.getUnits(token, params).enqueue(callback, mapper)
+        api.sprLocker.getUnits(APIHeader.createHeader(token), params).enqueue(callback, mapper)
     }
 }

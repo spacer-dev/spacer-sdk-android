@@ -6,6 +6,7 @@ import com.spacer.sdk.data.ICallback
 import com.spacer.sdk.data.IMapper
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
+import com.spacer.sdk.data.api.APIHeader
 import com.spacer.sdk.data.api.api
 import com.spacer.sdk.data.api.reqData.key.KeyGenerateReqData
 import com.spacer.sdk.data.api.reqData.key.KeyGenerateResultReqData
@@ -33,12 +34,12 @@ class CBLockerGattPutService : CBLockerGattService() {
             val mapper = object : IMapper<KeyGenerateResData, ByteArray> {
                 override fun map(source: KeyGenerateResData) = "${CBLockerConst.DEVICE_PUT_PREFIX}, ${source.key}".toByteArray()
             }
-            api.key.generate(token, params).enqueue(callback, mapper)
+            api.key.generate(APIHeader.createHeader(token), params).enqueue(callback, mapper)
         }
 
         override fun onFinished(characteristic: BluetoothGattCharacteristic, cbLocker: CBLockerModel, callback: ICallback) {
             val params = KeyGenerateResultReqData(spacerId, characteristic.readData())
-            api.key.generateResult(token, params).enqueue(callback)
+            api.key.generateResult(APIHeader.createHeader(token), params).enqueue(callback)
         }
 
         override fun onSuccess() = callback.onSuccess()
