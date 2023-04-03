@@ -1,6 +1,7 @@
 package com.spacer.sdk.services.location
 
 import com.spacer.sdk.data.IResultCallback
+import com.spacer.sdk.data.api.APIHeader
 import com.spacer.sdk.data.api.api
 import com.spacer.sdk.data.api.reqData.location.LocationGetReqData
 import com.spacer.sdk.data.extensions.RetrofitCallExtensions.enqueue
@@ -12,6 +13,6 @@ class LocationService {
         val params = LocationGetReqData(locationId)
         val mapper = LocationGetResDataMapper()
 
-        api.location.getLocation(token, params).enqueue(callback, mapper)
+        api.location.getLocation(APIHeader.createHeader(token), params).enqueue(callback, mapper)
     }
 }

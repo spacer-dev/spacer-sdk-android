@@ -14,25 +14,28 @@ import com.spacer.sdk.data.api.resData.key.MaintenanceKeyGetResData
 import com.spacer.sdk.data.api.resData.key.MaintenanceKeyGetResultResData
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.Header
+import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 
 interface IKeyAPI {
     @POST("key/generate")
-    fun generate(@Header(APIHeader.Token) token: String, @Body params: KeyGenerateReqData): Call<KeyGenerateResData>
+    fun generate(@HeaderMap headers: Map<String, String>, @Body params: KeyGenerateReqData): Call<KeyGenerateResData>
 
     @POST("key/generateResult")
-    fun generateResult(@Header(APIHeader.Token) token: String, @Body params: KeyGenerateResultReqData): Call<KeyGenerateResultResData>
+    fun generateResult(@HeaderMap headers: Map<String, String>, @Body params: KeyGenerateResultReqData): Call<KeyGenerateResultResData>
 
     @POST("key/get")
-    fun get(@Header(APIHeader.Token) token: String, @Body params: KeyGetReqData): Call<KeyGetResData>
+    fun get(@HeaderMap headers: Map<String, String>, @Body params: KeyGetReqData): Call<KeyGetResData>
 
     @POST("key/getResult")
-    fun getResult(@Header(APIHeader.Token) token: String, @Body params: KeyGetResultReqData): Call<KeyGetResultResData>
+    fun getResult(@HeaderMap headers: Map<String, String>, @Body params: KeyGetResultReqData): Call<KeyGetResultResData>
 
     @POST("key/maintenance/get")
-    fun getMaintenance(@Header(APIHeader.Token) token: String, @Body params: MaintenanceKeyGetReqData): Call<MaintenanceKeyGetResData>
+    fun getMaintenance(@HeaderMap headers: Map<String, String>, @Body params: MaintenanceKeyGetReqData): Call<MaintenanceKeyGetResData>
 
     @POST("key/maintenance/getResult")
-    fun getMaintenanceResult(@Header(APIHeader.Token) token: String, @Body params: MaintenanceKeyGetResultReqData): Call<MaintenanceKeyGetResultResData>
+    fun getMaintenanceResult(
+        @HeaderMap headers: Map<String, String>,
+        @Body params: MaintenanceKeyGetResultReqData
+    ): Call<MaintenanceKeyGetResultResData>
 }
