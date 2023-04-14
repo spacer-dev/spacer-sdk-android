@@ -6,5 +6,6 @@ data class SPRLockerResData(
     val id: String,
     val status: String,
     val size: String?,
-    val closedWait: String?
+    val closedWait: String?,
+    val doorStatus: String?
 ) : Serializable
