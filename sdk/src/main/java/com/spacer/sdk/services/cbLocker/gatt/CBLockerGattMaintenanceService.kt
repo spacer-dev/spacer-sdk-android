@@ -19,12 +19,12 @@ class CBLockerGattMaintenanceService : CBLockerGattService() {
     private lateinit var token: String
     private lateinit var callback: ICallback
 
-    fun connect(context: Context, token: String, cbLocker: CBLockerModel, callback: ICallback) {
+    fun connect(context: Context, token: String, cbLocker: CBLockerModel, callback: ICallback, isRetry: Boolean) {
         this.token = token
         this.callback = callback
 
         val gattCallback = CBLockerGattMaintenanceCallback()
-        super.connect(context, cbLocker, gattCallback, CBLockerGattActionType.OpenForMaintenance)
+        super.connect(context, cbLocker, gattCallback, CBLockerGattActionType.OpenForMaintenance, isRetry)
     }
 
     private open inner class CBLockerGattMaintenanceCallback : CBLockerGattCallback() {
