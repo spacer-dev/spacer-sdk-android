@@ -45,25 +45,17 @@ open class CBLockerGattService {
 
     @Synchronized
     private fun connectRemoteDevice() {
-        synchronized(lock) {
-            if (canConnecting()) {
-                logd("ーーーーーーーーーーーーーーーーーーーー")
-                logd("コネクトの処理開始")
-                logd("ーーーーーーーーーーーーーーーーーーーー")
-                val remoteDevice = bluetoothAdapter.getRemoteDevice(cbLocker.address)
-                bluetoothGatt = remoteDevice.connectGatt(
-                    context, false, gattCallback, BluetoothDevice.TRANSPORT_LE
-                )
-                timeout.during.set()
-                timeout.start.set()
-            }
-        }
+        val remoteDevice = bluetoothAdapter.getRemoteDevice(cbLocker.address)
+        bluetoothGatt = remoteDevice.connectGatt(
+            context, false, gattCallback, BluetoothDevice.TRANSPORT_LE
+        )
+        timeout.during.set()
+        timeout.start.set()
     }
 
     private fun reset() {
         timeout.clearAll()
         bluetoothGatt?.disconnect()
-        finishConnecting()
     }
 
     @Synchronized
@@ -217,24 +209,5 @@ open class CBLockerGattService {
 
     companion object {
         const val GATT_ERROR_STATE = 133
-        private val lock = Object()
-        private var connecting = false
-
-        fun canConnecting(): Boolean {
-            synchronized(lock) {
-                while (connecting) {
-                    lock.wait()
-                }
-                connecting = true
-                return true
-            }
-        }
-
-        fun finishConnecting() {
-            synchronized(lock) {
-                connecting = false
-                lock.notify()
-            }
-        }
     }
 }
