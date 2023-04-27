@@ -2,8 +2,6 @@ package com.spacer.sdk.services.cbLocker.gatt
 
 import android.bluetooth.*
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import com.spacer.sdk.data.ICallback
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
@@ -14,73 +12,90 @@ import com.spacer.sdk.values.cbLocker.*
 open class CBLockerGattService {
     private lateinit var context: Context
     protected lateinit var cbLocker: CBLockerModel
-    private lateinit var connectHandler: Handler
     private lateinit var gattCallback: CBLockerGattCallback
     private lateinit var actionType: CBLockerGattActionType
-    private lateinit var gatt: BluetoothGatt
+    private var bluetoothGatt: BluetoothGatt? = null
+    private var isRetry: Boolean = false
+    private var isCanceled = false
 
     protected val spacerId get() = cbLocker.spacerId
     private val bluetoothAdapter get() = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
-    private var connectRetryCnt = 0
-    private var isRetry = false
     private var timeout = CBLockerConnectTimeouts { error ->
-        gatt.disconnect()
-        gatt.close()
-        timeoutClearAll()
-
-        connectRetryCnt++
-        if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
-            cbLocker.reset()
-            gattCallback.onFailure(error)
-        } else {
-            isRetry = true
-            connectRemoteDevice()
-        }
+        failureIfNotCanceled(error)
     }
 
 
-    open fun connect(context: Context, cbLocker: CBLockerModel, gattCallback: CBLockerGattCallback, actionType: CBLockerGattActionType) {
+    open fun connect(
+        context: Context,
+        cbLocker: CBLockerModel,
+        gattCallback: CBLockerGattCallback,
+        actionType: CBLockerGattActionType,
+        isRetry: Boolean
+    ) {
         logd("connect: ${cbLocker.spacerId} ")
 
         this.context = context
         this.cbLocker = cbLocker
         this.gattCallback = gattCallback
-        this.connectHandler = Handler(Looper.getMainLooper())
         this.actionType = actionType
+        this.isRetry = isRetry
 
         connectRemoteDevice()
     }
 
+    @Synchronized
     private fun connectRemoteDevice() {
-        timeout.clearAll()
         val remoteDevice = bluetoothAdapter.getRemoteDevice(cbLocker.address)
-        gatt = remoteDevice.connectGatt(
+        bluetoothGatt = remoteDevice.connectGatt(
             context, false, gattCallback, BluetoothDevice.TRANSPORT_LE
         )
         timeout.during.set()
         timeout.start.set()
     }
 
-    private fun timeoutClearAll(){
+    private fun reset() {
         timeout.clearAll()
+        bluetoothGatt?.disconnect()
+    }
+
+    @Synchronized
+    private fun successIfNotCanceled() {
+        cbLocker.reset()
+        reset()
+        if (!isCanceled) {
+            isCanceled = true
+            gattCallback.onSuccess()
+        }
+    }
+
+    @Synchronized
+    private fun failureIfNotCanceled(error: SPRError) {
+        reset()
+        if (!isCanceled) {
+            isCanceled = true
+            gattCallback.onFailure(error)
+        }
     }
 
     open inner class CBLockerGattCallback : BluetoothGattCallback(), ICallback {
 
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            timeout.start.clear()
             logd("onConnectionStateChange: $status, $newState")
 
             when {
                 newState == BluetoothGatt.STATE_CONNECTED -> {
+                    timeout.start.clear()
                     gatt.discoverServices()
                     timeout.discover.set()
                 }
                 status == GATT_ERROR_STATE -> {
-                    connectRemoteDevice()
+                    failureIfNotCanceled(SPRError.CBServiceNotFound)
+
                 }
                 newState == BluetoothGatt.STATE_DISCONNECTED -> {
-                    gatt.close()
+                    bluetoothGatt?.close()
+                    bluetoothGatt = null
+
                 }
             }
         }
@@ -88,14 +103,16 @@ open class CBLockerGattService {
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             timeout.discover.clear()
             if (status != BluetoothGatt.GATT_SUCCESS) {
-                return gatt.fail(SPRError.CBServiceNotFound)
+                return failureIfNotCanceled(SPRError.CBServiceNotFound)
             }
 
-            val service = gatt.services.firstOrNull { it.uuid == CBLockerConst.DeviceServiceUUID } ?: return gatt.fail(SPRError.CBServiceNotFound)
+            val service =
+                gatt.services.firstOrNull { it.uuid == CBLockerConst.DeviceServiceUUID } ?: return failureIfNotCanceled(SPRError.CBServiceNotFound)
 
-            val characteristic = service.characteristics.firstOrNull { it.uuid == CBLockerConst.DeviceCharacteristicUUID } ?: return gatt.fail(
-                SPRError.CBCharacteristicNotFound
-            )
+            val characteristic =
+                service.characteristics.firstOrNull { it.uuid == CBLockerConst.DeviceCharacteristicUUID } ?: return failureIfNotCanceled(
+                    SPRError.CBCharacteristicNotFound
+                )
 
             gatt.readCharacteristic(characteristic)
             if (cbLocker.status == CBLockerGattStatus.None) {
@@ -118,16 +135,16 @@ open class CBLockerGattService {
             }
 
             if (BluetoothGatt.GATT_SUCCESS != status) {
-                return gatt.fail(SPRError.CBReadingCharacteristicFailed)
+                return failureIfNotCanceled(SPRError.CBReadingCharacteristicFailed)
             }
 
             if (isRetry && alreadyWrittenToCharacteristic(characteristic.readData())) {
-                gatt.finish(characteristic, cbLocker)
+                finish(characteristic, cbLocker)
             } else {
                 if (cbLocker.status == CBLockerGattStatus.None) {
                     gatt.getKeyAndWriteCharacteristic(characteristic, cbLocker)
                 } else {
-                    gatt.finish(characteristic, cbLocker)
+                    finish(characteristic, cbLocker)
                 }
             }
         }
@@ -137,7 +154,7 @@ open class CBLockerGattService {
             timeout.write.clear()
 
             if (BluetoothGatt.GATT_SUCCESS != status) {
-                return gatt.fail(SPRError.CBWritingCharacteristicFailed)
+                return failureIfNotCanceled(SPRError.CBWritingCharacteristicFailed)
             }
             cbLocker.update(CBLockerGattStatus.Write)
             gatt.readCharacteristic(characteristic)
@@ -164,43 +181,19 @@ open class CBLockerGattService {
                     timeout.write.set()
                 }
 
-                override fun onFailure(error: SPRError) = fail(error)
+                override fun onFailure(error: SPRError) = failureIfNotCanceled(error)
             }
 
             onKeyGet(characteristic, cbLocker, callback)
         }
 
-        private fun BluetoothGatt.finish(characteristic: BluetoothGattCharacteristic, cbLocker: CBLockerModel) {
+        private fun finish(characteristic: BluetoothGattCharacteristic, cbLocker: CBLockerModel) {
             val callback = object : ICallback {
-                override fun onSuccess() = success()
-                override fun onFailure(error: SPRError) = fail(error)
+                override fun onSuccess() = successIfNotCanceled()
+                override fun onFailure(error: SPRError) = failureIfNotCanceled(error)
             }
 
             onFinished(characteristic, cbLocker, callback)
-        }
-
-        private fun BluetoothGatt.reset() {
-            cbLocker.reset()
-            disconnect()
-            timeout.clearAll()
-        }
-
-        private fun BluetoothGatt.success() {
-            onSuccess()
-            reset()
-        }
-
-        private fun BluetoothGatt.fail(error: SPRError) {
-            connectRetryCnt++
-            if (connectRetryCnt > CBLockerConst.MaxRetryNum) {
-                onFailure(error)
-                reset()
-            } else {
-                isRetry = true
-                disconnect()
-                close()
-                connectRemoteDevice()
-            }
         }
 
         protected fun BluetoothGattCharacteristic.readData() = this.value.toString(Charsets.UTF_8)

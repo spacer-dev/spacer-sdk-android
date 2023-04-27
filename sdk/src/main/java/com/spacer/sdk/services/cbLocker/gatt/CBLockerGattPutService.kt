@@ -20,12 +20,12 @@ class CBLockerGattPutService : CBLockerGattService() {
     private lateinit var token: String
     private lateinit var callback: ICallback
 
-    fun connect(context: Context, token: String, cbLocker: CBLockerModel, callback: ICallback) {
+    fun connect(context: Context, token: String, cbLocker: CBLockerModel, callback: ICallback, isRetry: Boolean) {
         this.token = token
         this.callback = callback
 
         val gattCallback = CBLockerGattPutCallback()
-        super.connect(context, cbLocker, gattCallback, CBLockerGattActionType.Put)
+        super.connect(context, cbLocker, gattCallback, CBLockerGattActionType.Put, isRetry)
     }
 
     private open inner class CBLockerGattPutCallback : CBLockerGattCallback() {
