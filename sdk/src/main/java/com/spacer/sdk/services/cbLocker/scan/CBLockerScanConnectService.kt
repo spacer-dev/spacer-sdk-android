@@ -30,8 +30,16 @@ class CBLockerScanConnectService : CBLockerScanService() {
             spacerId,
             object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) =
-                    connectWithRetry(CBLockerGattActionType.Put, context, token, result, callback, 0, false)
-                
+                    connectWithRetry(
+                        CBLockerGattActionType.Put,
+                        context,
+                        token,
+                        result,
+                        callback,
+                        0,
+                        false
+                    )
+
                 override fun onFailure(error: SPRError) = callback.onFailure(error)
             }
         )
@@ -43,7 +51,15 @@ class CBLockerScanConnectService : CBLockerScanService() {
             spacerId,
             object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) =
-                    connectWithRetry(CBLockerGattActionType.Take, context, token, result, callback, 0, false)
+                    connectWithRetry(
+                        CBLockerGattActionType.Take,
+                        context,
+                        token,
+                        result,
+                        callback,
+                        0,
+                        false
+                    )
 
                 override fun onFailure(error: SPRError) = callback.onFailure(error)
             }
@@ -56,7 +72,15 @@ class CBLockerScanConnectService : CBLockerScanService() {
             spacerId,
             object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) =
-                    connectWithRetry(CBLockerGattActionType.OpenForMaintenance, context, token, result, callback, 0, false)
+                    connectWithRetry(
+                        CBLockerGattActionType.OpenForMaintenance,
+                        context,
+                        token,
+                        result,
+                        callback,
+                        0,
+                        false
+                    )
 
                 override fun onFailure(error: SPRError) = callback.onFailure(error)
             }
@@ -77,17 +101,32 @@ class CBLockerScanConnectService : CBLockerScanService() {
             override fun onFailure(error: SPRError) =
                 retryOrFailure(
                     error,
-                    { connectWithRetry(type, context, token, cbLocker, callback, retryNum + 1, true) },
+                    {
+                        connectWithRetry(
+                            type,
+                            context,
+                            token,
+                            cbLocker,
+                            callback,
+                            retryNum + 1,
+                            true
+                        )
+                    },
                     retryNum + 1,
                     cbLocker,
                     callback
                 )
         }
-
         createCBLockerGattServiceWithConnect(type, context, token, cbLocker, retryCallback, isRetry)
     }
 
-    fun retryOrFailure(error: SPRError, executable: () -> Unit, retryNum: Int, cbLocker: CBLockerModel, callback: ICallback) {
+    fun retryOrFailure(
+        error: SPRError,
+        executable: () -> Unit,
+        retryNum: Int,
+        cbLocker: CBLockerModel,
+        callback: ICallback
+    ) {
         if (retryNum <= CBLockerConst.MaxRetryNum) {
             executable.invoke()
         } else {
@@ -96,11 +135,36 @@ class CBLockerScanConnectService : CBLockerScanService() {
         }
     }
 
-    private fun createCBLockerGattServiceWithConnect(type: CBLockerGattActionType, context: Context, token: String, cbLocker: CBLockerModel, retryCallback: ICallback, isRetry: Boolean) {
+    private fun createCBLockerGattServiceWithConnect(
+        type: CBLockerGattActionType,
+        context: Context,
+        token: String,
+        cbLocker: CBLockerModel,
+        retryCallback: ICallback,
+        isRetry: Boolean
+    ) {
         return when (type) {
-            CBLockerGattActionType.Put -> CBLockerGattPutService().connect(context, token, cbLocker, retryCallback, isRetry)
-            CBLockerGattActionType.Take -> CBLockerGattTakeService().connect(context, token, cbLocker, retryCallback, isRetry)
-            CBLockerGattActionType.OpenForMaintenance -> CBLockerGattMaintenanceService().connect(context, token, cbLocker, retryCallback, isRetry)
+            CBLockerGattActionType.Put -> CBLockerGattPutService().connect(
+                context,
+                token,
+                cbLocker,
+                retryCallback,
+                isRetry
+            )
+            CBLockerGattActionType.Take -> CBLockerGattTakeService().connect(
+                context,
+                token,
+                cbLocker,
+                retryCallback,
+                isRetry
+            )
+            CBLockerGattActionType.OpenForMaintenance -> CBLockerGattMaintenanceService().connect(
+                context,
+                token,
+                cbLocker,
+                retryCallback,
+                isRetry
+            )
         }
     }
 
