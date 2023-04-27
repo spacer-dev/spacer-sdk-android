@@ -21,7 +21,7 @@ class CBLockerTimeout(private val seconds: Long, private val timeoutAction: () -
     }
 }
 
-class CBLockerConnectTimeouts(retryOrFailure: (SPRError) -> Unit) : ICallback {
+class CBLockerConnectTimeouts(retryOrFailure: (SPRError) -> Unit) {
     var start = CBLockerTimeout(CBLockerConst.StartTimeoutSeconds) { retryOrFailure(SPRError.CBConnectStartTimeout) }
     var discover = CBLockerTimeout(CBLockerConst.DiscoverTimeoutSeconds) { retryOrFailure(SPRError.CBConnectDiscoverTimeout) }
     var readBeforeWrite = CBLockerTimeout(CBLockerConst.ReadTimeoutSeconds) { retryOrFailure(SPRError.CBConnectReadTimeoutBeforeWrite) }
