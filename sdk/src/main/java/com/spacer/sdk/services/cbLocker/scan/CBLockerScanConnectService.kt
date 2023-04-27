@@ -89,7 +89,6 @@ class CBLockerScanConnectService : CBLockerScanService() {
 
     fun retryOrFailure(error: SPRError, executable: () -> Unit, retryNum: Int, cbLocker: CBLockerModel, callback: ICallback) {
         if (retryNum <= CBLockerConst.MaxRetryNum) {
-            logd("リトライカウント = $retryNum")
             executable.invoke()
         } else {
             cbLocker.reset()
