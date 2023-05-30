@@ -4,11 +4,8 @@ import android.content.Context
 import com.spacer.sdk.data.ICallback
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
-import com.spacer.sdk.data.extensions.LoggerExtensions.logd
 import com.spacer.sdk.models.cbLocker.CBLockerModel
-import com.spacer.sdk.services.cbLocker.gatt.CBLockerGattPutService
-import com.spacer.sdk.services.cbLocker.gatt.CBLockerGattTakeService
-import com.spacer.sdk.services.cbLocker.gatt.CBLockerGattMaintenanceService
+import com.spacer.sdk.services.cbLocker.gatt.*
 import com.spacer.sdk.values.cbLocker.CBLockerConst
 import com.spacer.sdk.values.cbLocker.CBLockerGattActionType
 
@@ -87,6 +84,25 @@ class CBLockerScanConnectService : CBLockerScanService() {
         )
     }
 
+    fun read(context: Context, spacerId: String, callback: IResultCallback<String>) {
+        scan(
+            context,
+            spacerId,
+            object : IResultCallback<CBLockerModel> {
+                override fun onSuccess(result: CBLockerModel) =
+                    connectWithRetry(
+                        context,
+                        result,
+                        callback,
+                        0,
+                        false
+                    )
+
+                override fun onFailure(error: SPRError) = callback.onFailure(error)
+            }
+        )
+    }
+
     fun connectWithRetry(
         type: CBLockerGattActionType,
         context: Context,
@@ -120,12 +136,56 @@ class CBLockerScanConnectService : CBLockerScanService() {
         createCBLockerGattServiceWithConnect(type, context, token, cbLocker, retryCallback, isRetry)
     }
 
+    fun connectWithRetry(
+        context: Context,
+        cbLocker: CBLockerModel,
+        callback: IResultCallback<String>,
+        retryNum: Int,
+        isRetry: Boolean
+    ) {
+        val retryCallback = object : IResultCallback<String> {
+            override fun onSuccess(result: String) = callback.onSuccess(result)
+            override fun onFailure(error: SPRError) =
+                retryOrFailure(
+                    error,
+                    {
+                        connectWithRetry(
+                            context,
+                            cbLocker,
+                            callback,
+                            retryNum + 1,
+                            true
+                        )
+                    },
+                    retryNum + 1,
+                    cbLocker,
+                    callback
+                )
+        }
+        CBLockerGattReadService().connect(context, cbLocker, retryCallback, isRetry)
+    }
+
     fun retryOrFailure(
         error: SPRError,
         executable: () -> Unit,
         retryNum: Int,
         cbLocker: CBLockerModel,
         callback: ICallback
+    ) {
+        if (retryNum <= CBLockerConst.MaxRetryNum) {
+            executable.invoke()
+        } else {
+            cbLocker.reset()
+            callback.onFailure(error)
+        }
+    }
+
+    fun retryOrFailure(
+        error: SPRError,
+        executable: () -> Unit,
+        retryNum: Int,
+        cbLocker: CBLockerModel,
+        callback: IResultCallback<String>
     ) {
         if (retryNum <= CBLockerConst.MaxRetryNum) {
             executable.invoke()
