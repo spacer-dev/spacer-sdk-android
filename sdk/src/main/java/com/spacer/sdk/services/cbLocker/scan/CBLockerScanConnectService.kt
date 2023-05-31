@@ -2,6 +2,7 @@ package com.spacer.sdk.services.cbLocker.scan
 
 import android.content.Context
 import com.spacer.sdk.data.ICallback
+import com.spacer.sdk.data.IFailureCallback
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
 import com.spacer.sdk.models.cbLocker.CBLockerModel
@@ -90,7 +91,7 @@ class CBLockerScanConnectService : CBLockerScanService() {
             spacerId,
             object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) =
-                    connectWithRetry(
+                    connectReadWithRetry(
                         context,
                         result,
                         callback,
@@ -136,7 +137,7 @@ class CBLockerScanConnectService : CBLockerScanService() {
         createCBLockerGattServiceWithConnect(type, context, token, cbLocker, retryCallback, isRetry)
     }
 
-    fun connectWithRetry(
+    fun connectReadWithRetry(
         context: Context,
         cbLocker: CBLockerModel,
         callback: IResultCallback<String>,
@@ -149,7 +150,7 @@ class CBLockerScanConnectService : CBLockerScanService() {
                 retryOrFailure(
                     error,
                     {
-                        connectWithRetry(
+                        connectReadWithRetry(
                             context,
                             cbLocker,
                             callback,
@@ -170,22 +171,7 @@ class CBLockerScanConnectService : CBLockerScanService() {
         executable: () -> Unit,
         retryNum: Int,
         cbLocker: CBLockerModel,
-        callback: ICallback
-    ) {
-        if (retryNum <= CBLockerConst.MaxRetryNum) {
-            executable.invoke()
-        } else {
-            cbLocker.reset()
-            callback.onFailure(error)
-        }
-    }
-
-    fun retryOrFailure(
-        error: SPRError,
-        executable: () -> Unit,
-        retryNum: Int,
-        cbLocker: CBLockerModel,
-        callback: IResultCallback<String>
+        callback: IFailureCallback
     ) {
         if (retryNum <= CBLockerConst.MaxRetryNum) {
             executable.invoke()

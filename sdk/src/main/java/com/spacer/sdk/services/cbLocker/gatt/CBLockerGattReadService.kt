@@ -2,6 +2,8 @@ package com.spacer.sdk.services.cbLocker.gatt
 
 import android.bluetooth.*
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
 import com.spacer.sdk.data.extensions.LoggerExtensions.logd
@@ -59,7 +61,10 @@ open class CBLockerGattReadService {
         reset()
         if (!isCanceled) {
             isCanceled = true
-            callback.onSuccess(readData)
+            val handler = Handler(Looper.getMainLooper())
+            handler.post {
+                callback.onSuccess(readData)
+            }
         }
     }
 
@@ -85,12 +90,10 @@ open class CBLockerGattReadService {
                 }
                 status == GATT_ERROR_STATE -> {
                     failureIfNotCanceled(SPRError.CBServiceNotFound)
-
                 }
                 newState == BluetoothGatt.STATE_DISCONNECTED -> {
                     bluetoothGatt?.close()
                     bluetoothGatt = null
-
                 }
             }
         }
