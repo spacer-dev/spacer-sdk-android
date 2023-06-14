@@ -91,7 +91,7 @@ class CBLockerScanConnectService : CBLockerScanService() {
             spacerId,
             object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) =
-                    connectReadWithRetry(
+                    connectWithRetryByRead(
                         context,
                         result,
                         callback,
@@ -137,7 +137,7 @@ class CBLockerScanConnectService : CBLockerScanService() {
         createCBLockerGattServiceWithConnect(type, context, token, cbLocker, retryCallback, isRetry)
     }
 
-    fun connectReadWithRetry(
+    fun connectWithRetryByRead(
         context: Context,
         cbLocker: CBLockerModel,
         callback: IResultCallback<String>,
@@ -150,7 +150,7 @@ class CBLockerScanConnectService : CBLockerScanService() {
                 retryOrFailure(
                     error,
                     {
-                        connectReadWithRetry(
+                        connectWithRetryByRead(
                             context,
                             cbLocker,
                             callback,
