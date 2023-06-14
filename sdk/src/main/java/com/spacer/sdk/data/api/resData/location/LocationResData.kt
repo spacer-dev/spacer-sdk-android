@@ -10,5 +10,6 @@ data class LocationResData(
     val detail: String,
     val open: String?,
     val close: String?,
+    val doorWaitType: String,
     val units: List<SPRLockerUnitResData>?,
 ) : Serializable

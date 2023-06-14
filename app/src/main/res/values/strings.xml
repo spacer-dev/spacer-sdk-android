@@ -38,6 +38,11 @@
     <string name="cb_take_url_key_hint">url key</string>
     <string name="cb_take_url_key_success_message">succeeded in taking with url key</string>
 
+    <string name="cb_read_title">read from locker</string>
+    <string name="cb_read_desc">connect to locker with bluetooth and read characteristic.</string>
+    <string name="cb_read_hint">spacer id</string>
+    <string name="cb_read_success_message">succeeded in reading</string>
+
     <string name="my_get_title">get my lockers</string>
     <string name="my_get_desc">get a list of your lockers in use.</string>
     <string name="my_get_success_message">succeeded in getting my lockers</string>

@@ -13,17 +13,18 @@ class LocationModel(
     val detail: String,
     val open: String?,
     val close: String?,
+    val doorWaitType: String,
     val units: List<SPRLockerUnitModel>?,
 ) {
     override fun toString(): String {
         val unitsText = units?.joinToString("\n") { it.toString() }
-        return "id:${id},name:${name},address:${address},detail:${detail},open:${open},close:${close},units:\n${unitsText}"
+        return "id:${id},name:${name},address:${address},detail:${detail},open:${open},close:${close},doorWaitType:${doorWaitType},units:\n${unitsText}"
     }
 }
 
 fun LocationResData.toModel(): LocationModel {
     val units = units?.map { it.toModel() }
-    return LocationModel(id, name, address, detail, open, close, units)
+    return LocationModel(id, name, address, detail, open, close, doorWaitType, units)
 }
 
 class LocationGetResDataMapper : IMapper<LocationGetResData, LocationModel> {
