@@ -61,6 +61,12 @@ class CBLockerService {
         }
     }
 
+    fun read(context: Context, spacerId: String, callback: IResultCallback<String>) {
+        if (isProcessing.compareAndSet(false, true)) {
+            CBLockerScanConnectService().read(context, spacerId, createCallback(callback))
+        }
+    }
+
     private fun <T> createCallback(callback: IResultCallback<T>): IResultCallback<T> {
         return object : IResultCallback<T> {
             override fun onSuccess(result: T) {

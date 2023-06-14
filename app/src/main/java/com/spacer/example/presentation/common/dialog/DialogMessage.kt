@@ -30,6 +30,7 @@ class DialogMessage {
         val CbLockerTakeSuccess = DialogMessage(R.string.success_title, R.string.cb_take_success_message)
         val CbLockerOpenForMaintenanceSuccess = DialogMessage(R.string.success_title, R.string.cb_open_for_maintenance_success_message)
         val CbLockerTakeUrlKeySuccess = DialogMessage(R.string.success_title, R.string.cb_take_url_key_success_message)
+        val CbLockerReadSuccess = DialogMessage(R.string.success_title, R.string.cb_read_success_message)
         val MyLockerGetSuccess = DialogMessage(R.string.success_title, R.string.my_get_success_message)
         val MyLockerReserveSuccess = DialogMessage(R.string.success_title, R.string.my_reserve_success_message)
         val MyLockerReserveCancelSuccess = DialogMessage(R.string.success_title, R.string.my_reserve_cancel_success_message)
