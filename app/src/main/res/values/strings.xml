@@ -14,9 +14,15 @@
     <string name="my_title">My Locker Service</string>
     <string name="spr_title">SPR Locker Service</string>
 
-    <string name="cb_scan_title">scan lockers</string>
-    <string name="cb_scan_desc">use bluetooth to detect locker in front of you.</string>
-    <string name="cb_scan_success_message">succeeded in scanning</string>
+    <string name="cb_scan_lockers_title">scan lockers</string>
+    <string name="cb_scan_lockers_desc">use bluetooth to detect locker in front of you.</string>
+    <string name="cb_scan_lockers_success_message">succeeded in scanning</string>
+
+    <string name="cb_scan_locker_title">scan locker</string>
+    <string name="cb_scan_locker_desc">use bluetooth to detect specific locker.</string>
+    <string name="cb_scan_locker_hint">spacer id</string>
+    <string name="cb_scan_locker_success_message">succeeded in scanning</string>
+
 
     <string name="cb_put_title">put in locker</string>
     <string name="cb_put_desc">connect to locker with bluetooth and put your luggage in locker.</string>
