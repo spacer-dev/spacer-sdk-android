@@ -6,13 +6,25 @@ import com.spacer.sdk.data.api.resData.sprLocker.SPRLockerResData
 import com.spacer.sdk.data.extensions.EnumExtensions.safeValueOf
 import com.spacer.sdk.values.sprLocker.SPRLockerStatus
 
-class SPRLockerModel(val id: String, val status: SPRLockerStatus, val size: String?, val closedWait: String, val version: String,  val doorStatus: String, val doorStatusExpiredAt: String?) {
-    override fun toString() = "id:${id},status:${status.text},size:${size},closedWait:${closedWait},version:${version},doorStatus:${doorStatus},doorStatusExpiredAt:${doorStatusExpiredAt}"
+class SPRLockerModel(
+    val id: String,
+    var address: String,
+    val status: SPRLockerStatus,
+    val size: String?,
+    val closedWait: String,
+    val version: String,
+    val doorStatus: String,
+    val doorStatusExpiredAt: String?
+) {
+    override fun toString() =
+        "id:${id},address:${address},status:${status.text},size:${size},closedWait:${closedWait},version:${version},doorStatus:${doorStatus},doorStatusExpiredAt:${doorStatusExpiredAt}"
 }
 
 fun SPRLockerResData.toModel(): SPRLockerModel {
     val status = safeValueOf(status, SPRLockerStatus.Unknown)
-    return SPRLockerModel(id, status, size, closedWait, version, doorStatus, doorStatusExpiredAt)
+    return SPRLockerModel(
+        id, "", status, size, closedWait, version, doorStatus, doorStatusExpiredAt
+    )
 }
 
 class SPRLockerListMapper : IMapper<SPRLockerGetResData, List<SPRLockerModel>> {

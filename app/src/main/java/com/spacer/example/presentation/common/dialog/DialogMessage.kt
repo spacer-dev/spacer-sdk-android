@@ -25,7 +25,8 @@ class DialogMessage {
     override fun toString() = "${title},${body}"
 
     companion object {
-        val CbLockerScanSuccess = DialogMessage(R.string.success_title, R.string.cb_scan_success_message)
+        val CbLockerScanLockersSuccess = DialogMessage(R.string.success_title, R.string.cb_scan_lockers_success_message)
+        val CbLockerScanLockerSuccess = DialogMessage(R.string.success_title, R.string.cb_scan_locker_success_message)
         val CbLockerPutSuccess = DialogMessage(R.string.success_title, R.string.cb_put_success_message)
         val CbLockerTakeSuccess = DialogMessage(R.string.success_title, R.string.cb_take_success_message)
         val CbLockerOpenForMaintenanceSuccess = DialogMessage(R.string.success_title, R.string.cb_open_for_maintenance_success_message)

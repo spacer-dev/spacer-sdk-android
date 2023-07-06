@@ -11,9 +11,12 @@ import android.os.Handler
 import android.os.Looper
 import android.os.ParcelUuid
 import com.spacer.sdk.data.IFailureCallback
+import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
 import com.spacer.sdk.data.extensions.LoggerExtensions.logd
 import com.spacer.sdk.models.cbLocker.CBLockerModel
+import com.spacer.sdk.models.sprLocker.SPRLockerModel
+import com.spacer.sdk.services.sprLocker.SPRLockerService
 import com.spacer.sdk.values.cbLocker.CBLockerConst
 import java.util.*
 
@@ -130,6 +133,28 @@ open class CBLockerScanService {
     }
 
     protected fun ScanResult.parse(spacerId: String) = CBLockerModel(spacerId, this.device.address)
+
+    protected fun MutableList<CBLockerModel>.parse(
+        token: String, callback: IResultCallback<List<SPRLockerModel>>
+    ) {
+        val spacerIds = this.map { it.spacerId }
+        val cbLockerMap = this.associateBy { it.spacerId }
+        val getLockersCallback = object : IResultCallback<List<SPRLockerModel>> {
+            override fun onSuccess(result: List<SPRLockerModel>) {
+                result.forEach { sprLocker ->
+                    cbLockerMap[sprLocker.id]?.let { cbLocker ->
+                        sprLocker.address = cbLocker.address
+                    }
+                }
+                callback.onSuccess(result)
+            }
+
+            override fun onFailure(error: SPRError) {
+                callback.onFailure(error)
+            }
+        }
+        SPRLockerService().getLockers(token, spacerIds, getLockersCallback)
+    }
 
     companion object {
         private const val MaxScanningCnt = 3
