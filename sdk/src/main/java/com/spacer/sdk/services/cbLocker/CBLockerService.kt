@@ -4,17 +4,30 @@ import android.content.Context
 import com.spacer.sdk.data.ICallback
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
+import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.models.myLocker.*
 import com.spacer.sdk.models.sprLocker.SPRLockerModel
 import com.spacer.sdk.services.cbLocker.scan.CBLockerScanConnectService
 import com.spacer.sdk.services.cbLocker.scan.CBLockerScanListService
+import com.spacer.sdk.services.cbLocker.scan.CBLockerScanSingleService
 import com.spacer.sdk.services.myLocker.MyLockerService
+import com.spacer.sdk.values.cbLocker.CBLockerGattActionType
 import java.util.concurrent.atomic.AtomicBoolean
 
 class CBLockerService {
     fun scan(context: Context, token: String, callback: IResultCallback<List<SPRLockerModel>>) {
         if (isProcessing.compareAndSet(false, true)) {
             CBLockerScanListService().scan(context, token, createCallback(callback))
+        }
+    }
+
+    fun scanWithSpacerId(
+        context: Context, token: String, spacerId: String, callback: IResultCallback<SPRLockerModel>
+    ) {
+        if (isProcessing.compareAndSet(false, true)) {
+            CBLockerScanSingleService().scanWithSpacerId(
+                context, token, spacerId, createCallback(callback)
+            )
         }
     }
 
@@ -33,30 +46,57 @@ class CBLockerService {
     fun openForMaintenance(context: Context, token: String, spacerId: String, callback: ICallback) {
         if (isProcessing.compareAndSet(false, true)) {
             CBLockerScanConnectService().openForMaintenance(
-                context,
-                token,
-                spacerId,
-                createCallback(callback)
+                context, token, spacerId, createCallback(callback)
             )
         }
     }
 
     fun takeWithUrlKey(context: Context, token: String, urlKey: String, callback: ICallback) {
         if (isProcessing.compareAndSet(false, true)) {
-            MyLockerService().shareUrlKey(
-                token,
-                urlKey,
-                object : IResultCallback<MyLockerModel> {
-                    override fun onSuccess(result: MyLockerModel) {
-                        isProcessing.set(false)
-                        take(context, token, result.id, callback)
-                    }
-
-                    override fun onFailure(error: SPRError) {
-                        isProcessing.set(false)
-                        callback.onFailure(error)
-                    }
+            MyLockerService().shareUrlKey(token, urlKey, object : IResultCallback<MyLockerModel> {
+                override fun onSuccess(result: MyLockerModel) {
+                    isProcessing.set(false)
+                    take(context, token, result.id, callback)
                 }
+
+                override fun onFailure(error: SPRError) {
+                    isProcessing.set(false)
+                    callback.onFailure(error)
+                }
+            })
+        }
+    }
+
+    fun putWithDeviceAddress(
+        context: Context, token: String, spacerId: String, address: String, callback: ICallback
+    ) {
+        if (isProcessing.compareAndSet(false, true)) {
+            val cbLocker = CBLockerModel(spacerId, address)
+            CBLockerScanConnectService().connectWithRetry(
+                CBLockerGattActionType.Put,
+                context,
+                token,
+                cbLocker,
+                createCallback(callback),
+                0,
+                false
+            )
+        }
+    }
+
+    fun takeWithDeviceAddress(
+        context: Context, token: String, spacerId: String, address: String, callback: ICallback
+    ) {
+        if (isProcessing.compareAndSet(false, true)) {
+            val cbLocker = CBLockerModel(spacerId, address)
+            CBLockerScanConnectService().connectWithRetry(
+                CBLockerGattActionType.Take,
+                context,
+                token,
+                cbLocker,
+                createCallback(callback),
+                0,
+                false
             )
         }
     }

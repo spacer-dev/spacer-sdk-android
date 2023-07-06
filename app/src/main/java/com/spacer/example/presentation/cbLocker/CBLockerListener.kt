@@ -17,8 +17,18 @@ class CBLockerListener(private val fragment: Fragment) {
         override fun onClicked() {
             val context = fragment.context ?: return
 
-            requester.runList<SPRLockerModel>(DialogMessage.CbLockerScanSuccess) {
+            requester.runList<SPRLockerModel>(DialogMessage.CbLockerScanLockersSuccess) {
                 service.scan(context, SdkToken, it)
+            }
+        }
+    }
+
+    val scanWithSpacerId = object : ICardInputViewListener {
+        override fun onClicked(text: String) {
+            val context = fragment.context ?: return
+
+            requester.runGet<SPRLockerModel>(DialogMessage.CbLockerScanLockerSuccess) {
+                service.scanWithSpacerId(context, SdkToken, text, it)
             }
         }
     }

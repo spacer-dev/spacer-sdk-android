@@ -5,7 +5,6 @@ import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
 import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.models.sprLocker.SPRLockerModel
-import com.spacer.sdk.services.sprLocker.SPRLockerService
 
 class CBLockerScanListService : CBLockerScanService() {
     private lateinit var token: String
@@ -30,7 +29,7 @@ class CBLockerScanListService : CBLockerScanService() {
 
         override fun onDelayed(): Boolean {
             return if (scanningList.size > 0) {
-                scanningList.parse(callback)
+                scanningList.parse(token, callback)
                 true
             } else {
                 false
@@ -38,10 +37,5 @@ class CBLockerScanListService : CBLockerScanService() {
         }
 
         override fun onFailure(error: SPRError) = callback.onFailure(error)
-
-        private fun MutableList<CBLockerModel>.parse(callback: IResultCallback<List<SPRLockerModel>>) {
-            val spacerIds = this.map { it.spacerId }
-            SPRLockerService().getLockers(token, spacerIds, callback)
-        }
     }
 }
