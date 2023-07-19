@@ -5,12 +5,17 @@ import android.content.Context
 import com.spacer.sdk.data.ICallback
 import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
+import com.spacer.sdk.data.api.APIHeader
+import com.spacer.sdk.data.api.api
+import com.spacer.sdk.data.api.reqData.logger.LoggerErrorReqData
 import com.spacer.sdk.data.extensions.LoggerExtensions.logd
+import com.spacer.sdk.data.extensions.RetrofitCallExtensions.enqueue
 import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.values.cbLocker.*
 
 open class CBLockerGattService {
     private lateinit var context: Context
+    private lateinit var token: String
     protected lateinit var cbLocker: CBLockerModel
     private lateinit var gattCallback: CBLockerGattCallback
     private lateinit var actionType: CBLockerGattActionType
@@ -27,6 +32,7 @@ open class CBLockerGattService {
 
     open fun connect(
         context: Context,
+        token: String,
         cbLocker: CBLockerModel,
         gattCallback: CBLockerGattCallback,
         actionType: CBLockerGattActionType,
@@ -35,6 +41,7 @@ open class CBLockerGattService {
         logd("connect: ${cbLocker.spacerId} ")
 
         this.context = context
+        this.token = token
         this.cbLocker = cbLocker
         this.gattCallback = gattCallback
         this.actionType = actionType
@@ -89,13 +96,12 @@ open class CBLockerGattService {
                     timeout.discover.set()
                 }
                 status == GATT_ERROR_STATE -> {
+                    sendErrorMessage("onConnectionStateChange", SPRError.CBServiceNotFound, status)
                     failureIfNotCanceled(SPRError.CBServiceNotFound)
-
                 }
                 newState == BluetoothGatt.STATE_DISCONNECTED -> {
                     bluetoothGatt?.close()
                     bluetoothGatt = null
-
                 }
             }
         }
@@ -103,16 +109,34 @@ open class CBLockerGattService {
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             timeout.discover.clear()
             if (status != BluetoothGatt.GATT_SUCCESS) {
+                sendErrorMessage("onServicesDiscovered", SPRError.CBServiceNotFound, status)
                 return failureIfNotCanceled(SPRError.CBServiceNotFound)
             }
-
             val service =
-                gatt.services.firstOrNull { it.uuid == CBLockerConst.DeviceServiceUUID } ?: return failureIfNotCanceled(SPRError.CBServiceNotFound)
+                gatt.services.firstOrNull { it.uuid == CBLockerConst.DeviceServiceUUID } ?: run {
+                    val allUuids = gatt.services.joinToString(", ") { it.uuid.toString() }
+                    sendErrorMessage(
+                        "onServicesDiscovered",
+                        SPRError.CBServiceNotFound,
+                        status,
+                        "Available service UUIDs: $allUuids"
+                    )
+                    return failureIfNotCanceled(SPRError.CBServiceNotFound)
+                }
 
             val characteristic =
-                service.characteristics.firstOrNull { it.uuid == CBLockerConst.DeviceCharacteristicUUID } ?: return failureIfNotCanceled(
-                    SPRError.CBCharacteristicNotFound
-                )
+                service.characteristics.firstOrNull { it.uuid == CBLockerConst.DeviceCharacteristicUUID }
+                    ?: run {
+                        val allUuids =
+                            service.characteristics.joinToString(", ") { it.uuid.toString() }
+                        sendErrorMessage(
+                            "onServicesDiscovered",
+                            SPRError.CBCharacteristicNotFound,
+                            status,
+                            "Available characteristic UUIDs: $allUuids"
+                        )
+                        return failureIfNotCanceled(SPRError.CBCharacteristicNotFound)
+                    }
 
             gatt.readCharacteristic(characteristic)
             if (cbLocker.status == CBLockerGattStatus.None) {
@@ -135,6 +159,7 @@ open class CBLockerGattService {
             }
 
             if (BluetoothGatt.GATT_SUCCESS != status) {
+                sendErrorMessage("onCharacteristicRead", SPRError.CBReadingCharacteristicFailed, status)
                 return failureIfNotCanceled(SPRError.CBReadingCharacteristicFailed)
             }
 
@@ -154,6 +179,7 @@ open class CBLockerGattService {
             timeout.write.clear()
 
             if (BluetoothGatt.GATT_SUCCESS != status) {
+                sendErrorMessage("onCharacteristicWrite", SPRError.CBWritingCharacteristicFailed, status)
                 return failureIfNotCanceled(SPRError.CBWritingCharacteristicFailed)
             }
             cbLocker.update(CBLockerGattStatus.Write)
@@ -204,6 +230,28 @@ open class CBLockerGattService {
                 CBLockerGattActionType.Take -> !CBLockerConst.UsingReadData.contains(readValue)
                 CBLockerGattActionType.OpenForMaintenance -> cbLocker.status == CBLockerGattStatus.Write
             }
+        }
+
+        private fun sendErrorMessage(
+            errorPoint: String,
+            error: SPRError,
+            status: Int,
+            other: Any? = null
+        ) {
+            val message = StringBuilder("errorPoint: $errorPoint, status: $status, error: $error")
+            if (other != null) {
+                message.append(", $other")
+            }
+            val params = LoggerErrorReqData(
+                "bluetoothGattError", message
+            )
+            api.logger.sendError(APIHeader.createHeader(token), params).enqueue(object : ICallback {
+                override fun onSuccess() {
+                }
+
+                override fun onFailure(error: SPRError) {
+                }
+            })
         }
     }
 

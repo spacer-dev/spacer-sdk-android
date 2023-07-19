@@ -47,6 +47,7 @@ class APIClient {
     val myLocker: IMyLockerAPI by lazy { retrofit.create(IMyLockerAPI::class.java) }
     val sprLocker: ISPRLockerAPI by lazy { retrofit.create(ISPRLockerAPI::class.java) }
     val location: ILocationAPI by lazy { retrofit.create(ILocationAPI::class.java) }
+    val logger: ILoggerAPI by lazy { retrofit.create(ILoggerAPI::class.java) }
 }
 
 val api = APIClient()
