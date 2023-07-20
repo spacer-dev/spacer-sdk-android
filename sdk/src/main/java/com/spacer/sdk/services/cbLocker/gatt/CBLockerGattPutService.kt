@@ -25,7 +25,7 @@ class CBLockerGattPutService : CBLockerGattService() {
         this.callback = callback
 
         val gattCallback = CBLockerGattPutCallback()
-        super.connect(context, cbLocker, gattCallback, CBLockerGattActionType.Put, isRetry)
+        super.connect(context, token, cbLocker, gattCallback, CBLockerGattActionType.Put, isRetry)
     }
 
     private open inner class CBLockerGattPutCallback : CBLockerGattCallback() {
