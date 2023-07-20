@@ -7,7 +7,7 @@ import com.spacer.sdk.data.IResultCallback
 import com.spacer.sdk.data.SPRError
 import com.spacer.sdk.data.api.APIHeader
 import com.spacer.sdk.data.api.api
-import com.spacer.sdk.data.api.reqData.logger.LoggerErrorReqData
+import com.spacer.sdk.data.api.reqData.logger.LoggerReqData
 import com.spacer.sdk.data.extensions.LoggerExtensions.logd
 import com.spacer.sdk.data.extensions.RetrofitCallExtensions.enqueue
 import com.spacer.sdk.models.cbLocker.CBLockerModel
@@ -242,10 +242,10 @@ open class CBLockerGattService {
             if (other != null) {
                 message.append(", $other")
             }
-            val params = LoggerErrorReqData(
+            val params = LoggerReqData(
                 "bluetoothGattError", message
             )
-            api.logger.sendError(APIHeader.createHeader(token), params).enqueue(object : ICallback {
+            api.logger.sendWarn(APIHeader.createHeader(token), params).enqueue(object : ICallback {
                 override fun onSuccess() {
                 }
 
