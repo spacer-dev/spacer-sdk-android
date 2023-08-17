@@ -238,7 +238,7 @@ open class CBLockerGattService {
             status: Int,
             other: Any? = null
         ) {
-            val message = StringBuilder("errorPoint: $errorPoint, status: $status, error: $error")
+            val message = StringBuilder("box: $spacerId, errorPoint: $errorPoint, status: $status, error: $error")
             if (other != null) {
                 message.append(", $other")
             }
