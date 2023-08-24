@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     buildToolsVersion "30.0.0"
     def properties = new Properties()
 
@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.spacer.example"
         minSdkVersion 23
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
