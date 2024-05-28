@@ -25,11 +25,10 @@ class CBLockerConnectTimeouts(retryOrFailure: (SPRError) -> Unit) {
     var start = CBLockerTimeout(CBLockerConst.StartTimeoutSeconds) { retryOrFailure(SPRError.CBConnectStartTimeout) }
     var discover = CBLockerTimeout(CBLockerConst.DiscoverTimeoutSeconds) { retryOrFailure(SPRError.CBConnectDiscoverTimeout) }
     var readBeforeWrite = CBLockerTimeout(CBLockerConst.ReadTimeoutSeconds) { retryOrFailure(SPRError.CBConnectReadTimeoutBeforeWrite) }
-    var readAfterWrite = CBLockerTimeout(CBLockerConst.ReadTimeoutSeconds) { retryOrFailure(SPRError.CBConnectReadTimeoutAfterWrite) }
     var write = CBLockerTimeout(CBLockerConst.WriteTimeoutSeconds) { retryOrFailure(SPRError.CBConnectWriteTimeout) }
     var during = CBLockerTimeout(CBLockerConst.DuringTimeoutSeconds) { retryOrFailure(SPRError.CBConnectDuringTimeout) }
 
     fun clearAll() {
-        arrayOf(start, discover, readBeforeWrite, readAfterWrite, write, during).forEach { timeout -> timeout.clear() }
+        arrayOf(start, discover, readBeforeWrite, write, during).forEach { timeout -> timeout.clear() }
     }
 }
