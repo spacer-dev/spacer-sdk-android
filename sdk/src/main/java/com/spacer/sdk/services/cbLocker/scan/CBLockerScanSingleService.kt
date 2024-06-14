@@ -10,7 +10,9 @@ open class CBLockerScanSingleService : CBLockerScanService() {
     private lateinit var spacerId: String
     private lateinit var callback: IResultCallback<CBLockerModel>
 
-    protected fun scan(context: Context, spacerId: String, callback: IResultCallback<CBLockerModel>) {
+    protected fun scan(
+        context: Context, spacerId: String, callback: IResultCallback<CBLockerModel>
+    ) {
         this.spacerId = spacerId
         this.callback = callback
 
@@ -23,15 +25,29 @@ open class CBLockerScanSingleService : CBLockerScanService() {
     ) {
         scan(context, spacerId, object : IResultCallback<CBLockerModel> {
             override fun onSuccess(result: CBLockerModel) {
-                mutableListOf(result).parse(token, object : IResultCallback<List<SPRLockerModel>> {
-                    override fun onSuccess(result: List<SPRLockerModel>) =
-                        callback.onSuccess(result.first())
+                result.parse(token, true, object : IResultCallback<SPRLockerModel> {
+                    override fun onSuccess(result: SPRLockerModel) = callback.onSuccess(result)
 
                     override fun onFailure(error: SPRError) = callback.onFailure(error)
                 })
             }
 
-            override fun onFailure(error: SPRError) = callback.onFailure(error)
+            override fun onFailure(error: SPRError) {
+                CBLockerModel(spacerId, "").parse(
+                    token,
+                    false,
+                    object : IResultCallback<SPRLockerModel> {
+                        override fun onSuccess(result: SPRLockerModel) {
+                            if (result.isHttpSupported) {
+                                callback.onSuccess(result)
+                            } else {
+                                callback.onFailure(error)
+                            }
+                        }
+
+                        override fun onFailure(error: SPRError) = callback.onFailure(error)
+                    })
+            }
         })
     }
 

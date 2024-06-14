@@ -43,6 +43,7 @@ class APIClient {
         .client(httpBuilder.build())
         .build()
 
+    val httpLocker: IHttpLockerAPI by lazy { retrofit.create(IHttpLockerAPI::class.java) }
     val key: IKeyAPI by lazy { retrofit.create(IKeyAPI::class.java) }
     val myLocker: IMyLockerAPI by lazy { retrofit.create(IMyLockerAPI::class.java) }
     val sprLocker: ISPRLockerAPI by lazy { retrofit.create(ISPRLockerAPI::class.java) }

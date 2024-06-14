@@ -1,18 +1,26 @@
 package com.spacer.sdk.data.api
 
-import com.spacer.sdk.data.api.reqData.sprLocker.SPRLockerGetReqData
+import com.spacer.sdk.data.api.reqData.sprLocker.SPRLockerListReqData
 import com.spacer.sdk.data.api.reqData.sprLocker.SPRLockerUnitGetReqData
 import com.spacer.sdk.data.api.resData.sprLocker.SPRLockerGetResData
+import com.spacer.sdk.data.api.resData.sprLocker.SPRLockerListResData
 import com.spacer.sdk.data.api.resData.sprLocker.SPRLockerUnitGetResData
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.HeaderMap
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ISPRLockerAPI {
-    @POST("locker/spacer/get")
-    fun getLockers(@HeaderMap headers: Map<String, String>, @Body params: SPRLockerGetReqData): Call<SPRLockerGetResData>
+    @POST("locker/spacer/list")
+    fun getLockers(
+        @HeaderMap headers: Map<String, String>, @Body params: SPRLockerListReqData
+    ): Call<SPRLockerListResData>
+
+    @GET("locker/spacer/{spacerId}")
+    fun getLocker(
+        @HeaderMap headers: Map<String, String>, @Path("spacerId") spacerId: String
+    ): Call<SPRLockerGetResData>
 
     @POST("locker/unit/get")
-    fun getUnits(@HeaderMap headers: Map<String, String>, @Body params: SPRLockerUnitGetReqData): Call<SPRLockerUnitGetResData>
+    fun getUnits(
+        @HeaderMap headers: Map<String, String>, @Body params: SPRLockerUnitGetReqData
+    ): Call<SPRLockerUnitGetResData>
 }

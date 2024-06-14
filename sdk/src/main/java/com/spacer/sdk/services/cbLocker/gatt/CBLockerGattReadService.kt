@@ -15,7 +15,6 @@ open class CBLockerGattReadService {
     protected lateinit var cbLocker: CBLockerModel
     private lateinit var callback: IResultCallback<String>
     private var bluetoothGatt: BluetoothGatt? = null
-    private var isRetry: Boolean = false
     private var isCanceled = false
 
     protected val spacerId get() = cbLocker.spacerId
@@ -29,14 +28,12 @@ open class CBLockerGattReadService {
         context: Context,
         cbLocker: CBLockerModel,
         callback: IResultCallback<String>,
-        isRetry: Boolean
     ) {
         logd("connect: ${cbLocker.spacerId} ")
 
         this.context = context
         this.cbLocker = cbLocker
         this.callback = callback
-        this.isRetry = isRetry
 
         connectRemoteDevice()
     }

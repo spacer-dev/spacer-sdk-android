@@ -68,10 +68,21 @@ class CBLockerService {
     }
 
     fun putWithDeviceAddress(
-        context: Context, token: String, spacerId: String, address: String, callback: ICallback
+        context: Context,
+        token: String,
+        spacerId: String,
+        address: String,
+        isHttpSupported: Boolean,
+        isScanned: Boolean,
+        callback: ICallback
     ) {
         if (isProcessing.compareAndSet(false, true)) {
-            val cbLocker = CBLockerModel(spacerId, address)
+            val cbLocker = CBLockerModel(
+                spacerId,
+                address,
+                isHttpSupported = isHttpSupported,
+                isScanned = isScanned
+            )
             CBLockerScanConnectService().connectWithRetry(
                 CBLockerGattActionType.Put,
                 context,
@@ -85,10 +96,21 @@ class CBLockerService {
     }
 
     fun takeWithDeviceAddress(
-        context: Context, token: String, spacerId: String, address: String, callback: ICallback
+        context: Context,
+        token: String,
+        spacerId: String,
+        address: String,
+        isHttpSupported: Boolean,
+        isScanned: Boolean,
+        callback: ICallback
     ) {
         if (isProcessing.compareAndSet(false, true)) {
-            val cbLocker = CBLockerModel(spacerId, address)
+            val cbLocker = CBLockerModel(
+                spacerId,
+                address,
+                isHttpSupported = isHttpSupported,
+                isScanned = isScanned
+            )
             CBLockerScanConnectService().connectWithRetry(
                 CBLockerGattActionType.Take,
                 context,
@@ -101,9 +123,19 @@ class CBLockerService {
         }
     }
 
-    fun read(context: Context, spacerId: String, callback: IResultCallback<String>) {
+    fun checkDoorStatusAvailable(
+        context: Context,
+        token: String,
+        spacerId: String,
+        callback: IResultCallback<Boolean>
+    ) {
         if (isProcessing.compareAndSet(false, true)) {
-            CBLockerScanConnectService().read(context, spacerId, createCallback(callback))
+            CBLockerScanConnectService().checkDoorStatusAvailable(
+                context,
+                token,
+                spacerId,
+                createCallback(callback)
+            )
         }
     }
 

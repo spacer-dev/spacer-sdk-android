@@ -9,5 +9,6 @@ data class SPRLockerResData(
     val closedWait: String,
     val version: String,
     val doorStatus: String,
-    val doorStatusExpiredAt: String?
+    val doorStatusExpiredAt: String?,
+    val isHttpSupported: Boolean
 ) : Serializable

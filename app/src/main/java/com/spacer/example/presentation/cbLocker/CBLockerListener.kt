@@ -63,16 +63,6 @@ class CBLockerListener(private val fragment: Fragment) {
         }
     }
 
-    val read = object : ICardInputViewListener {
-        override fun onClicked(text: String) {
-            val context = fragment.context ?: return
-
-            requester.runGet<String>(DialogMessage.CbLockerReadSuccess) {
-                service.read(context, text, it)
-            }
-        }
-    }
-
     val takeUrlKey = object : ICardInputViewListener {
         override fun onClicked(text: String) {
             val context = fragment.context ?: return
