@@ -8,10 +8,11 @@ class CBLockerModel(
     var status: CBLockerGattStatus = CBLockerGattStatus.None,
     var doorStatus: String = "",
     var isHttpSupported: Boolean = false,
-    var isScanned: Boolean = false
+    var isScanned: Boolean = false,
+    var hasBLERetried: Boolean = false
 ) {
     override fun toString() =
-        "spacerId:${spacerId},address:${address},status:${status},doorStatus:${doorStatus},isHttpSupported:${isHttpSupported},isScanned:${isScanned}"
+        "spacerId:${spacerId},address:${address},status:${status},doorStatus:${doorStatus},isHttpSupported:${isHttpSupported},isScanned:${isScanned},hasBLERetried:${hasBLERetried}"
 
     fun update(status: CBLockerGattStatus) {
         this.status = status

@@ -113,7 +113,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         val retryCallback = object : ICallback {
             override fun onSuccess() = callback.onSuccess()
             override fun onFailure(error: SPRError) {
-                if (cbLocker.isHttpSupported && cbLocker.status == CBLockerGattStatus.None && httpFallbackErrors.contains(
+                if (cbLocker.isHttpSupported && !cbLocker.hasBLERetried && httpFallbackErrors.contains(
                         error
                     ) && PermissionChecker.isLocationPermitted(context)
                 ) {
@@ -140,6 +140,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         callback: IFailureCallback
     ) {
         if (retryNum <= CBLockerConst.MaxRetryNum) {
+            cbLocker.hasBLERetried = true
             executable.invoke()
         } else {
             cbLocker.reset()
