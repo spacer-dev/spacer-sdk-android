@@ -6,10 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.content.ContextCompat
-import com.spacer.sdk.data.ICallback
-import com.spacer.sdk.data.IFailureCallback
-import com.spacer.sdk.data.IResultCallback
-import com.spacer.sdk.data.SPRError
+import com.spacer.sdk.data.*
 import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.models.sprLocker.SPRLockerModel
 import com.spacer.sdk.services.cbLocker.gatt.*
@@ -28,13 +25,14 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         SPRError.CBConnectDiscoverTimeout,
         SPRError.CBConnectReadTimeoutBeforeWrite
     )
-    val notAvailableReadData: List<String> = listOf("openedExpired", "openedNotExpired", "closedExpired", "false")
+    val notAvailableReadData: List<String> =
+        listOf("openedExpired", "openedNotExpired", "closedExpired", "false")
 
     fun put(context: Context, token: String, spacerId: String, callback: ICallback) {
         super.scan(
             context,
             spacerId,
-            createCallBack(spacerId, token, object : IResultCallback<CBLockerModel> {
+            createCallBack(context, token, spacerId, object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) = connectWithRetry(
                     CBLockerGattActionType.Put, context, token, result, callback, 0, false
                 )
@@ -48,7 +46,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         super.scan(
             context,
             spacerId,
-            createCallBack(spacerId, token, object : IResultCallback<CBLockerModel> {
+            createCallBack(context, token, spacerId, object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) = connectWithRetry(
                     CBLockerGattActionType.Take, context, token, result, callback, 0, false
                 )
@@ -62,7 +60,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         super.scan(
             context,
             spacerId,
-            createCallBack(spacerId, token, object : IResultCallback<CBLockerModel> {
+            createCallBack(context, token, spacerId, object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) = connectWithRetry(
                     CBLockerGattActionType.OpenForMaintenance,
                     context,
@@ -84,7 +82,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         super.scan(
             context,
             spacerId,
-            createCallBack(spacerId, token, object : IResultCallback<CBLockerModel> {
+            createCallBack(context, token, spacerId, object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) {
                     if (!result.isScanned) {
                         callback.onSuccess(result.doorStatus == CBLockerConst.AvailableDoorStatus)
@@ -108,7 +106,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         retryNum: Int,
         isRetry: Boolean
     ) {
-        if (cbLocker.isHttpSupported && !cbLocker.isScanned && isLocationPermitted(context)) {
+        if (cbLocker.isHttpSupported && !cbLocker.isScanned && PermissionChecker.isLocationPermitted(context)) {
             execHttpLockerService(context, type, token, cbLocker.spacerId, callback)
             return
         }
@@ -117,7 +115,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
             override fun onFailure(error: SPRError) {
                 if (cbLocker.isHttpSupported && cbLocker.status == CBLockerGattStatus.None && httpFallbackErrors.contains(
                         error
-                    ) && isLocationPermitted(context)
+                    ) && PermissionChecker.isLocationPermitted(context)
                 ) {
                     execHttpLockerService(context, type, token, cbLocker.spacerId, callback)
                     return
@@ -180,8 +178,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
 
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        @SuppressLint("MissingPermission")
-        val myLocation =
+        @SuppressLint("MissingPermission") val myLocation =
             locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                 ?: locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
@@ -202,14 +199,8 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         }
     }
 
-    private fun isLocationPermitted(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context, Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
     private fun createCallBack(
-        spacerId: String, token: String, callback: IResultCallback<CBLockerModel>
+        context: Context, token: String, spacerId: String, callback: IResultCallback<CBLockerModel>
     ): IResultCallback<CBLockerModel> {
         return object : IResultCallback<CBLockerModel> {
             override fun onSuccess(cbLocker: CBLockerModel) {
@@ -229,7 +220,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
                 val cbLocker = CBLockerModel(spacerId, "")
                 cbLocker.parse(token, false, object : IResultCallback<SPRLockerModel> {
                     override fun onSuccess(result: SPRLockerModel) {
-                        if (result.isHttpSupported) {
+                        if (result.isHttpSupported && PermissionChecker.isLocationPermitted(context)) {
                             cbLocker.doorStatus = result.doorStatus
                             cbLocker.isHttpSupported = true
                             cbLocker.isScanned = false

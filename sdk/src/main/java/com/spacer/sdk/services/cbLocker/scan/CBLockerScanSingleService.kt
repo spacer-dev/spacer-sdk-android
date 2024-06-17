@@ -2,6 +2,7 @@ package com.spacer.sdk.services.cbLocker.scan
 
 import android.content.Context
 import com.spacer.sdk.data.IResultCallback
+import com.spacer.sdk.data.PermissionChecker
 import com.spacer.sdk.data.SPRError
 import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.models.sprLocker.SPRLockerModel
@@ -38,7 +39,7 @@ open class CBLockerScanSingleService : CBLockerScanService() {
                     false,
                     object : IResultCallback<SPRLockerModel> {
                         override fun onSuccess(result: SPRLockerModel) {
-                            if (result.isHttpSupported) {
+                            if (result.isHttpSupported && PermissionChecker.isLocationPermitted(context)) {
                                 callback.onSuccess(result)
                             } else {
                                 callback.onFailure(error)
