@@ -108,28 +108,28 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
     ) {
         if (cbLocker.isHttpSupported && !cbLocker.isScanned && PermissionChecker.isLocationPermitted(context)) {
             execHttpLockerService(context, type, token, cbLocker.spacerId, callback)
-            return
-        }
-        val retryCallback = object : ICallback {
-            override fun onSuccess() = callback.onSuccess()
-            override fun onFailure(error: SPRError) {
-                if (cbLocker.isHttpSupported && !cbLocker.hasBLERetried && httpFallbackErrors.contains(
-                        error
-                    ) && PermissionChecker.isLocationPermitted(context)
-                ) {
-                    execHttpLockerService(context, type, token, cbLocker.spacerId, callback)
-                    return
-                }
-                retryOrFailure(
-                    error, {
-                        connectWithRetry(
-                            type, context, token, cbLocker, callback, retryNum + 1, true
+        } else {
+            val retryCallback = object : ICallback {
+                override fun onSuccess() = callback.onSuccess()
+                override fun onFailure(error: SPRError) {
+                    if (cbLocker.isHttpSupported && !cbLocker.hasBLERetried && httpFallbackErrors.contains(
+                            error
+                        ) && PermissionChecker.isLocationPermitted(context)
+                    ) {
+                        execHttpLockerService(context, type, token, cbLocker.spacerId, callback)
+                    } else {
+                        retryOrFailure(
+                            error, {
+                                connectWithRetry(
+                                    type, context, token, cbLocker, callback, retryNum + 1, true
+                                )
+                            }, retryNum + 1, cbLocker, callback
                         )
-                    }, retryNum + 1, cbLocker, callback
-                )
+                    }
+                }
             }
+            createCBLockerGattServiceWithConnect(type, context, token, cbLocker, retryCallback, isRetry)
         }
-        createCBLockerGattServiceWithConnect(type, context, token, cbLocker, retryCallback, isRetry)
     }
 
     fun retryOrFailure(
