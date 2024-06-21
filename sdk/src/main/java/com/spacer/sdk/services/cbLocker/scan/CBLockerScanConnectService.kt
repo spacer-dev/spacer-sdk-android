@@ -85,7 +85,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
             createCallBack(context, token, spacerId, object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) {
                     if (!result.isScanned) {
-                        callback.onSuccess(result.doorStatus == CBLockerConst.AvailableDoorStatus)
+                        callback.onSuccess(result.isHttpSupported)
                         return
                     }
                     val readConnectCallback = createReadCallBack(result, callback)
@@ -248,7 +248,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
             }
 
             override fun onFailure(error: SPRError) {
-                callback.onSuccess(cbLocker.doorStatus == CBLockerConst.AvailableDoorStatus)
+                callback.onSuccess(cbLocker.isHttpSupported)
             }
         }
     }
