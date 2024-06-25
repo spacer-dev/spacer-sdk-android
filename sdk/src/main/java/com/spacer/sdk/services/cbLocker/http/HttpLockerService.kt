@@ -9,19 +9,19 @@ import com.spacer.sdk.data.extensions.RetrofitCallExtensions.enqueue
 
 class HttpLockerService {
 
-    fun put(token: String, spacerId: String, lat: Double, lng: Double, callback: ICallback) {
+    fun put(token: String, spacerId: String, lat: Double?, lng: Double?, callback: ICallback) {
         val params = HttpLockerReqData(spacerId, lat, lng)
 
         api.httpLocker.put(APIHeader.createHeader(token), params).enqueue(callback)
     }
 
-    fun take(token: String, spacerId: String, lat: Double, lng: Double, callback: ICallback) {
+    fun take(token: String, spacerId: String, lat: Double?, lng: Double?, callback: ICallback) {
         val params = HttpLockerReqData(spacerId, lat, lng)
 
         api.httpLocker.take(APIHeader.createHeader(token), params).enqueue(callback)
     }
 
-    fun openForMaintenance(token: String, spacerId: String, lat: Double, lng: Double, callback: ICallback) {
+    fun openForMaintenance(token: String, spacerId: String, lat: Double?, lng: Double?, callback: ICallback) {
         val params = HttpLockerReqData(spacerId, lat, lng)
 
         api.httpLocker.openForMaintenance(APIHeader.createHeader(token), params).enqueue(callback)

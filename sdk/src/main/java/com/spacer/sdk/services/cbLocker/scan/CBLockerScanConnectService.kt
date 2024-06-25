@@ -176,27 +176,24 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         spacerId: String,
         callback: ICallback
     ) {
-
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         @SuppressLint("MissingPermission") val myLocation =
             locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                 ?: locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
-        myLocation?.let {
-            val lat = it.latitude
-            val lng = it.longitude
-            when (type) {
-                CBLockerGattActionType.Put -> HttpLockerService().put(
-                    token, spacerId, lat, lng, callback
-                )
-                CBLockerGattActionType.Take -> HttpLockerService().take(
-                    token, spacerId, lat, lng, callback
-                )
-                CBLockerGattActionType.OpenForMaintenance -> HttpLockerService().openForMaintenance(
-                    token, spacerId, lat, lng, callback
-                )
-            }
+        val lat = myLocation?.latitude
+        val lng = myLocation?.longitude
+        when (type) {
+            CBLockerGattActionType.Put -> HttpLockerService().put(
+                token, spacerId, lat, lng, callback
+            )
+            CBLockerGattActionType.Take -> HttpLockerService().take(
+                token, spacerId, lat, lng, callback
+            )
+            CBLockerGattActionType.OpenForMaintenance -> HttpLockerService().openForMaintenance(
+                token, spacerId, lat, lng, callback
+            )
         }
     }
 
