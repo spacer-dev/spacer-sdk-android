@@ -12,7 +12,6 @@ class CBLockerConst {
         const val ReadTimeoutSeconds: Long = 5000
         const val WriteTimeoutSeconds: Long = 5000
         const val DuringTimeoutSeconds: Long = 60000
-        const val AvailableDoorStatus = "closed"
 
         val ScanMills = SPR.config.scanMills
         val MaxRetryNum = SPR.config.maxRetryNum
