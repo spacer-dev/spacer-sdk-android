@@ -37,7 +37,7 @@ fun SPRLockerResData.toModel(): SPRLockerModel {
         doorStatus,
         doorStatusExpiredAt,
         isHttpSupported,
-        isScanned = true
+        isScanned = false
     )
 }
 
