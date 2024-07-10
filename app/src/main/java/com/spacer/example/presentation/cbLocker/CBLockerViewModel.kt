@@ -13,5 +13,4 @@ class CBLockerViewModel : ViewModel() {
     val take = CardViewModel().apply { init(R.string.cb_take_title, R.string.cb_take_desc, R.string.cb_take_hint) }
     val openForMaintenance = CardViewModel().apply { init(R.string.cb_open_for_maintenance_title, R.string.cb_open_for_maintenance_desc, R.string.cb_open_for_maintenance_hint) }
     val takeUrlKey = CardViewModel().apply { init(R.string.cb_take_url_key_title, R.string.cb_take_url_key_desc, R.string.cb_take_url_key_hint) }
-    val read = CardViewModel().apply { init(R.string.cb_read_title, R.string.cb_read_desc, R.string.cb_read_hint) }
 }

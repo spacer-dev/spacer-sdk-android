@@ -37,8 +37,8 @@ class CBLockerGattTakeService : CBLockerGattService() {
             api.key.get(APIHeader.createHeader(token), params).enqueue(callback, mapper)
         }
 
-        override fun onFinished(characteristic: BluetoothGattCharacteristic, cbLocker: CBLockerModel, callback: ICallback) {
-            val params = KeyGetResultReqData(spacerId, characteristic.readData())
+        override fun onFinished(callback: ICallback) {
+            val params = KeyGetResultReqData(spacerId)
             api.key.getResult(APIHeader.createHeader(token), params).enqueue(callback)
         }
 

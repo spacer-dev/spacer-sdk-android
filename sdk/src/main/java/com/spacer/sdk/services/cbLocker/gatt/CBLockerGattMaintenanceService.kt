@@ -36,8 +36,8 @@ class CBLockerGattMaintenanceService : CBLockerGattService() {
             api.key.getMaintenance(APIHeader.createHeader(token), params).enqueue(callback, mapper)
         }
 
-        override fun onFinished(characteristic: BluetoothGattCharacteristic, cbLocker: CBLockerModel, callback: ICallback) {
-            val params = MaintenanceKeyGetResultReqData(spacerId, characteristic.readData())
+        override fun onFinished(callback: ICallback) {
+            val params = MaintenanceKeyGetResultReqData(spacerId)
             api.key.getMaintenanceResult(APIHeader.createHeader(token), params).enqueue(callback)
         }
 

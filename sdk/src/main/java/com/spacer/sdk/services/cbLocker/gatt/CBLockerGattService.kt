@@ -137,13 +137,8 @@ open class CBLockerGattService {
                         )
                         return failureIfNotCanceled(SPRError.CBCharacteristicNotFound)
                     }
-
             gatt.readCharacteristic(characteristic)
-            if (cbLocker.status == CBLockerGattStatus.None) {
-                timeout.readBeforeWrite.set()
-            } else {
-                timeout.readAfterWrite.set()
-            }
+            timeout.readBeforeWrite.set()
         }
 
         override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
@@ -152,11 +147,7 @@ open class CBLockerGattService {
 
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
             logd("onCharacteristicRead: $status")
-            if (cbLocker.status == CBLockerGattStatus.None) {
-                timeout.readBeforeWrite.clear()
-            } else {
-                timeout.readAfterWrite.clear()
-            }
+            timeout.readBeforeWrite.clear()
 
             if (BluetoothGatt.GATT_SUCCESS != status) {
                 sendErrorMessage("onCharacteristicRead", SPRError.CBReadingCharacteristicFailed, status)
@@ -164,13 +155,9 @@ open class CBLockerGattService {
             }
 
             if (isRetry && alreadyWrittenToCharacteristic(characteristic.readData())) {
-                finish(characteristic, cbLocker)
+                finish()
             } else {
-                if (cbLocker.status == CBLockerGattStatus.None) {
-                    gatt.getKeyAndWriteCharacteristic(characteristic, cbLocker)
-                } else {
-                    finish(characteristic, cbLocker)
-                }
+                gatt.getKeyAndWriteCharacteristic(characteristic, cbLocker)
             }
         }
 
@@ -183,8 +170,7 @@ open class CBLockerGattService {
                 return failureIfNotCanceled(SPRError.CBWritingCharacteristicFailed)
             }
             cbLocker.update(CBLockerGattStatus.Write)
-            gatt.readCharacteristic(characteristic)
-            timeout.readAfterWrite.set()
+            finish()
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
@@ -195,7 +181,7 @@ open class CBLockerGattService {
             throw RuntimeException("not implementation!")
         }
 
-        open fun onFinished(characteristic: BluetoothGattCharacteristic, cbLocker: CBLockerModel, callback: ICallback) {
+        open fun onFinished(callback: ICallback) {
             throw RuntimeException("not implementation!")
         }
 
@@ -213,13 +199,13 @@ open class CBLockerGattService {
             onKeyGet(characteristic, cbLocker, callback)
         }
 
-        private fun finish(characteristic: BluetoothGattCharacteristic, cbLocker: CBLockerModel) {
+        private fun finish() {
             val callback = object : ICallback {
                 override fun onSuccess() = successIfNotCanceled()
                 override fun onFailure(error: SPRError) = failureIfNotCanceled(error)
             }
 
-            onFinished(characteristic, cbLocker, callback)
+            onFinished(callback)
         }
 
         protected fun BluetoothGattCharacteristic.readData() = this.value.toString(Charsets.UTF_8)
