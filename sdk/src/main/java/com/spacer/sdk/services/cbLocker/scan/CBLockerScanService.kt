@@ -144,6 +144,7 @@ open class CBLockerScanService {
                 result.forEach { sprLocker ->
                     cbLockerMap[sprLocker.id]?.let { cbLocker ->
                         sprLocker.address = cbLocker.address
+                        sprLocker.isScanned = spacerIds.contains(sprLocker.id)
                     }
                 }
                 callback.onSuccess(result)
@@ -154,6 +155,25 @@ open class CBLockerScanService {
             }
         }
         SPRLockerService().getLockers(token, spacerIds, getLockersCallback)
+    }
+
+    protected fun CBLockerModel.parse(
+        token: String, isScanned: Boolean, callback: IResultCallback<SPRLockerModel>
+    ) {
+        val spacerId = this.spacerId
+        val address = this.address
+        val getLockersCallback = object : IResultCallback<SPRLockerModel> {
+            override fun onSuccess(result: SPRLockerModel) {
+                result.address = address
+                result.isScanned = isScanned
+                callback.onSuccess(result)
+            }
+
+            override fun onFailure(error: SPRError) {
+                callback.onFailure(error)
+            }
+        }
+        SPRLockerService().getLocker(token, spacerId, getLockersCallback)
     }
 
     companion object {
