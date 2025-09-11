@@ -23,6 +23,24 @@ class SPRLockerModel(
 ) {
     override fun toString() =
         "id:${id},address:${address},status:${status.text},size:${size},closedWait:${closedWait},version:${version},doorStatus:${doorStatus},doorStatusExpiredAt:${doorStatusExpiredAt},isHttpSupported:${isHttpSupported}"
+
+    companion object {
+        fun placeholder(id: String, address: String): SPRLockerModel {
+            return SPRLockerModel(
+                id = id,
+                address = address,
+                status = SPRLockerStatus.Unknown,
+                size = "",
+                closedWait = "true",
+                version = "0.0.0",
+                doorStatus = "",
+                doorStatusExpiredAt = "",
+                isHttpSupported = false,
+                isScanned = false
+            )
+        }
+    }
+
 }
 
 fun SPRLockerResData.toModel(): SPRLockerModel {

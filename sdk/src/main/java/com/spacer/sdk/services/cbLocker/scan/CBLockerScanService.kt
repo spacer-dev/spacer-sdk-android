@@ -18,6 +18,7 @@ import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.models.sprLocker.SPRLockerModel
 import com.spacer.sdk.services.sprLocker.SPRLockerService
 import com.spacer.sdk.values.cbLocker.CBLockerConst
+import com.spacer.sdk.values.sprLocker.SPRLockerStatus
 import java.util.*
 
 open class CBLockerScanService {
@@ -158,7 +159,7 @@ open class CBLockerScanService {
     }
 
     protected fun CBLockerModel.parse(
-        token: String, isScanned: Boolean, callback: IResultCallback<SPRLockerModel>
+        token: String, isScanned: Boolean, isGetLocker:Boolean, callback: IResultCallback<SPRLockerModel>
     ) {
         val spacerId = this.spacerId
         val address = this.address
@@ -173,7 +174,11 @@ open class CBLockerScanService {
                 callback.onFailure(error)
             }
         }
-        SPRLockerService().getLocker(token, spacerId, getLockersCallback)
+        if (!isGetLocker) {
+            SPRLockerService().getLocker(token, spacerId, getLockersCallback)
+        } else {
+            callback.onSuccess(SPRLockerModel.placeholder(this.spacerId, this.address))
+        }
     }
 
     companion object {
