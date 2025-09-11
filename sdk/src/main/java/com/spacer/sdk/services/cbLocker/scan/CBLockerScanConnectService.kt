@@ -87,7 +87,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         super.scan(
             context,
             spacerId,
-            createCallBack(token, false, object : IResultCallback<CBLockerModel> {
+            createCallBack(context, token, spacerId, false, object : IResultCallback<CBLockerModel> {
                 override fun onSuccess(result: CBLockerModel) {
                     if (!result.isScanned) {
                         callback.onSuccess(result.isHttpSupported)
@@ -175,7 +175,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
         super.scan(
             context,
             spacerId,
-            createCallBack(token, true, object : IResultCallback<CBLockerModel>{
+            createCallBack(context, token, spacerId, true, object : IResultCallback<CBLockerModel>{
                 override fun onSuccess(result: CBLockerModel) {
                     result.isHttpSupported = cbLocker.isHttpSupported
                     result.doorStatus = cbLocker.doorStatus
@@ -212,7 +212,7 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
     }
 
     private fun createCallBack(
-        token: String, isGetLocker: Boolean, callback: IResultCallback<CBLockerModel>
+        context: Context, token: String, spacerId: String, isGetLocker:Boolean, callback: IResultCallback<CBLockerModel>
     ): IResultCallback<CBLockerModel> {
         return object : IResultCallback<CBLockerModel> {
             override fun onSuccess(cbLocker: CBLockerModel) {
@@ -228,7 +228,23 @@ class CBLockerScanConnectService : CBLockerScanSingleService() {
                 })
             }
 
-            override fun onFailure(error: SPRError) = callback.onFailure(error)
+            override fun onFailure(error: SPRError) {
+                val cbLocker = CBLockerModel(spacerId, "")
+                cbLocker.parse(token, false, isGetLocker, object : IResultCallback<SPRLockerModel> {
+                    override fun onSuccess(result: SPRLockerModel) {
+                        if (result.isHttpSupported && PermissionChecker.isLocationPermitted(context)) {
+                            cbLocker.doorStatus = result.doorStatus
+                            cbLocker.isHttpSupported = true
+                            cbLocker.isScanned = false
+                            callback.onSuccess(cbLocker)
+                        } else {
+                            callback.onFailure(error)
+                        }
+                    }
+
+                    override fun onFailure(error: SPRError) = callback.onFailure(error)
+                })
+            }
         }
     }
 
