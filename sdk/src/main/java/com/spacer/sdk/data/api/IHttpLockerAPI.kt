@@ -20,6 +20,11 @@ interface IHttpLockerAPI {
         @HeaderMap headers: Map<String, String>, @Body params: HttpLockerReqData
     ): Call<HttpLockerResData>
 
+    @POST("locationRPi/box/reservedOpen")
+    fun reservedOpen(
+        @HeaderMap headers: Map<String, String>, @Body params: HttpLockerReqData
+    ): Call<HttpLockerResData>
+
     @POST("locationRPi/box/openForMaintenance")
     fun openForMaintenance(
         @HeaderMap headers: Map<String, String>, @Body params: HttpLockerReqData
