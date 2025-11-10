@@ -53,6 +53,16 @@ class CBLockerListener(private val fragment: Fragment) {
         }
     }
 
+    val reservedOpen = object : ICardInputViewListener {
+        override fun onClicked(text: String) {
+            val context = fragment.context ?: return
+
+            requester.run(DialogMessage.CbLockerReservedOpenSuccess) {
+                service.reservedOpen(context, SdkToken, text, it)
+            }
+        }
+    }
+
     val openForMaintenance = object : ICardInputViewListener {
         override fun onClicked(text: String) {
             val context = fragment.context ?: return
@@ -69,6 +79,16 @@ class CBLockerListener(private val fragment: Fragment) {
 
             requester.run(DialogMessage.CbLockerTakeUrlKeySuccess) {
                 service.takeWithUrlKey(context, SdkToken, text, it)
+            }
+        }
+    }
+
+    val checkDoorStatus = object : ICardInputViewListener {
+        override fun onClicked(text: String) {
+            val context = fragment.context ?: return
+
+            requester.runGet<Boolean>(DialogMessage.CbLockerCheckDoorStatusSuccess) {
+                service.checkDoorStatusAvailable(context, SdkToken, text, it)
             }
         }
     }

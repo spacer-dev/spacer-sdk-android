@@ -25,17 +25,22 @@
 
 
     <string name="cb_put_title">put in locker</string>
-    <string name="cb_put_desc">connect to locker with bluetooth and put your luggage in locker.</string>
+    <string name="cb_put_desc">connect to locker with http/bluetooth and put your luggage in locker.</string>
     <string name="cb_put_hint">spacer id</string>
     <string name="cb_put_success_message">succeeded in putting</string>
 
     <string name="cb_take_title">take from locker</string>
-    <string name="cb_take_desc">connect to locker with bluetooth and take luggage from locker.</string>
+    <string name="cb_take_desc">connect to locker with http/bluetooth and take luggage from locker.</string>
     <string name="cb_take_hint">spacer id</string>
     <string name="cb_take_success_message">succeeded in taking</string>
 
+    <string name="cb_reserved_open_title">reserved open from locker</string>
+    <string name="cb_reserved_open_desc">connect to locker with http and reserved open luggage from locker.</string>
+    <string name="cb_reserved_open_hint">spacer id</string>
+    <string name="cb_reserved_open_success_message">succeeded in reserved opening</string>
+
     <string name="cb_open_for_maintenance_title">open for maintenance from locker</string>
-    <string name="cb_open_for_maintenance_desc">connect to locker with bluetooth and open for maintenance from locker.</string>
+    <string name="cb_open_for_maintenance_desc">connect to locker with http/bluetooth and open for maintenance from locker.</string>
     <string name="cb_open_for_maintenance_hint">spacer id</string>
     <string name="cb_open_for_maintenance_success_message">succeeded in opening</string>
 
@@ -48,6 +53,11 @@
     <string name="cb_read_desc">connect to locker with bluetooth and read characteristic.</string>
     <string name="cb_read_hint">spacer id</string>
     <string name="cb_read_success_message">succeeded in reading</string>
+
+    <string name="cb_check_door_status_title">check door status from locker</string>
+    <string name="cb_check_door_status_desc">connect to locker with bluetooth and check door status.</string>
+    <string name="cb_check_door_status_hint">spacer id</string>
+    <string name="cb_check_door_status_success_message">succeeded in check door status</string>
 
     <string name="my_get_title">get my lockers</string>
     <string name="my_get_desc">get a list of your lockers in use.</string>
