@@ -1,5 +1,6 @@
 package com.spacer.sdk.services.cbLocker.scan
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
@@ -7,6 +8,8 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.ParcelUuid
@@ -18,7 +21,6 @@ import com.spacer.sdk.models.cbLocker.CBLockerModel
 import com.spacer.sdk.models.sprLocker.SPRLockerModel
 import com.spacer.sdk.services.sprLocker.SPRLockerService
 import com.spacer.sdk.values.cbLocker.CBLockerConst
-import com.spacer.sdk.values.sprLocker.SPRLockerStatus
 import java.util.*
 
 open class CBLockerScanService {
@@ -44,6 +46,11 @@ open class CBLockerScanService {
             return scanCallback.onFailure(SPRError.CBScanDisabled)
         }
 
+        // 使用アプリの権限チェック
+        if (!checkPermission(context)) {
+            return scanCallback.onFailure(SPRError.CBScanDisabled)
+        }
+
         val scanFilters = buildScanFilters()
         val scanSettings = buildScanSettings()
 
@@ -53,6 +60,24 @@ open class CBLockerScanService {
         scanningCnt = 0
 
         postDelayedRunnable()
+    }
+
+    private fun checkPermission(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Androidバージョン12以上
+            return hasPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
+                    && hasPermission(context, Manifest.permission.BLUETOOTH_SCAN)
+                    && hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            // Androidバージョン11以下
+            return hasPermission(context, Manifest.permission.BLUETOOTH)
+                    && hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+    }
+
+    private fun hasPermission(context: Context, permission: String): Boolean {
+        return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     protected open fun postDelayedRunnable() {
