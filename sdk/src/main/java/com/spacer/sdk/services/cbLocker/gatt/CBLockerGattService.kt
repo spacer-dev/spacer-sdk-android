@@ -215,6 +215,8 @@ open class CBLockerGattService {
                 CBLockerGattActionType.Put -> CBLockerConst.UsingOrWriteReadData.contains(readValue)
                 CBLockerGattActionType.Take -> !CBLockerConst.UsingReadData.contains(readValue)
                 CBLockerGattActionType.OpenForMaintenance -> cbLocker.status == CBLockerGattStatus.Write
+                // Not Supported
+                CBLockerGattActionType.ReservedOpen -> throw RuntimeException (SPRError.CBServiceNotSupported.message)
             }
         }
 

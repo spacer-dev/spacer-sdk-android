@@ -8,5 +8,6 @@ enum class CBLockerGattStatus {
 enum class CBLockerGattActionType {
     Put,
     Take,
+    ReservedOpen,
     OpenForMaintenance
 }

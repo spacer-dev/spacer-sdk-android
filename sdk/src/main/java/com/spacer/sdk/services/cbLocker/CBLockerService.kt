@@ -43,6 +43,12 @@ class CBLockerService {
         }
     }
 
+    fun reservedOpen(context: Context, token: String, spacerId: String, callback: ICallback) {
+        if (isProcessing.compareAndSet(false, true)) {
+            CBLockerScanConnectService().reservedOpen(context, token, spacerId, createCallback(callback))
+        }
+    }
+
     fun openForMaintenance(context: Context, token: String, spacerId: String, callback: ICallback) {
         if (isProcessing.compareAndSet(false, true)) {
             CBLockerScanConnectService().openForMaintenance(
@@ -64,62 +70,6 @@ class CBLockerService {
                     callback.onFailure(error)
                 }
             })
-        }
-    }
-
-    fun putWithDeviceAddress(
-        context: Context,
-        token: String,
-        spacerId: String,
-        address: String,
-        isHttpSupported: Boolean,
-        isScanned: Boolean,
-        callback: ICallback
-    ) {
-        if (isProcessing.compareAndSet(false, true)) {
-            val cbLocker = CBLockerModel(
-                spacerId,
-                address,
-                isHttpSupported = isHttpSupported,
-                isScanned = isScanned
-            )
-            CBLockerScanConnectService().connectWithRetry(
-                CBLockerGattActionType.Put,
-                context,
-                token,
-                cbLocker,
-                createCallback(callback),
-                0,
-                false
-            )
-        }
-    }
-
-    fun takeWithDeviceAddress(
-        context: Context,
-        token: String,
-        spacerId: String,
-        address: String,
-        isHttpSupported: Boolean,
-        isScanned: Boolean,
-        callback: ICallback
-    ) {
-        if (isProcessing.compareAndSet(false, true)) {
-            val cbLocker = CBLockerModel(
-                spacerId,
-                address,
-                isHttpSupported = isHttpSupported,
-                isScanned = isScanned
-            )
-            CBLockerScanConnectService().connectWithRetry(
-                CBLockerGattActionType.Take,
-                context,
-                token,
-                cbLocker,
-                createCallback(callback),
-                0,
-                false
-            )
         }
     }
 

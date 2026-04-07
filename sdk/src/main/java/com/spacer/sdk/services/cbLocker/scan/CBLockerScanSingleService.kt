@@ -26,7 +26,7 @@ open class CBLockerScanSingleService : CBLockerScanService() {
     ) {
         scan(context, spacerId, object : IResultCallback<CBLockerModel> {
             override fun onSuccess(result: CBLockerModel) {
-                result.parse(token, true, object : IResultCallback<SPRLockerModel> {
+                result.parse(token, true, false, object : IResultCallback<SPRLockerModel> {
                     override fun onSuccess(result: SPRLockerModel) = callback.onSuccess(result)
 
                     override fun onFailure(error: SPRError) = callback.onFailure(error)
@@ -36,6 +36,7 @@ open class CBLockerScanSingleService : CBLockerScanService() {
             override fun onFailure(error: SPRError) {
                 CBLockerModel(spacerId, "").parse(
                     token,
+                    false,
                     false,
                     object : IResultCallback<SPRLockerModel> {
                         override fun onSuccess(result: SPRLockerModel) {
