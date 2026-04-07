@@ -17,6 +17,7 @@ For more information, see [docs](https://rogue-flight-1e9.notion.site/SPACER-API
 Provides locker operation using BLE
 
 - Scan lockers
+- Open the reserved, locked locker.
 - Deposit your luggage in the locker
 - Take your luggage out of the locker
 - Temporarily unlock locker
@@ -85,6 +86,16 @@ service.scan(
     token,
     object : IResultCallback<List<SPRLockerModel>> {
         override fun onSuccess(result: List<SPRLockerModel>) {}
+        override fun onFailure(error: SPRError) {}
+    })
+
+// Open the reserved, locked locker.
+service.reservedOpen(
+    context,
+    token,
+    spacerId,
+    object : ICallback {
+        override fun onSuccess() {}
         override fun onFailure(error: SPRError) {}
     })
 
